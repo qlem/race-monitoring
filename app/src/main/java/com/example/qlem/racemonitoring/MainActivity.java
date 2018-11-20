@@ -11,22 +11,27 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_LOCATION_CODE = 1;
-
+    private final int REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 2;
     LocationManager locationManager;
+    List<Location> locations;
 
     LocationListener locationListener = new LocationListener() {
 
         @Override
         public void onLocationChanged(Location location) {
             updateUI(location);
+            locations.add(location);
         }
 
         @Override
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         public void onProviderDisabled(String provider) {}
     };
 
+    // For test
     private void updateUI(Location location) {
         TextView latitudeView = findViewById(R.id.latitude);
         TextView longitudeView = findViewById(R.id.longitude);
@@ -46,11 +52,12 @@ public class MainActivity extends AppCompatActivity {
         longitudeView.setText(String.format("lon: %s", location.getLongitude()));
     }
 
-    private void checkPermission() {
+    private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // TODO explain why app needs permission (popup)
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         REQUEST_LOCATION_CODE);
@@ -60,8 +67,55 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_LOCATION_CODE);
             }
         } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+                    0, locationListener);
+            setStopListenerMainButton();
         }
+    }
+
+    private void getWriteExternalStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // TODO explain why app needs permission (popup)
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
+            }
+        } else {
+            HandlerGPXFile handlerGPX = new HandlerGPXFile(MainActivity.this, locations);
+            handlerGPX.writeGPXFile();
+        }
+    }
+
+    private void setStartListenerMainButton() {
+        Button mainButton = findViewById(R.id.main_button);
+        mainButton.setText(R.string.btn_start);
+        mainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getLocationPermission();
+            }
+        });
+    }
+
+    private void setStopListenerMainButton() {
+        Button mainButton = findViewById(R.id.main_button);
+        mainButton.setText(R.string.btn_stop);
+        mainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationManager.removeUpdates(locationListener);
+                getWriteExternalStoragePermission();
+                locations.clear();
+                setStartListenerMainButton();
+            }
+        });
     }
 
     @Override
@@ -71,31 +125,37 @@ public class MainActivity extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        checkPermission();
+        locations = new ArrayList<>();
 
-        Button mainButton = findViewById(R.id.main_button);
-        mainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        setStartListenerMainButton();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_LOCATION_CODE: {
+            case REQUEST_LOCATION_CODE:
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Log.i("DEBUG", "permission granted");
+                    Toast.makeText(this, "Permission granted: app can access to location",
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    finish();
+                    Toast.makeText(this, "Permission denied: app cannot access to location",
+                            Toast.LENGTH_SHORT).show();
                 }
-            }
+                break;
+            case REQUEST_WRITE_EXTERNAL_STORAGE_CODE:
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this,
+                            "Permission granted: app can read and write in external storage",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this,
+                            "Permission denied: cannot read and write in external storage",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 }
