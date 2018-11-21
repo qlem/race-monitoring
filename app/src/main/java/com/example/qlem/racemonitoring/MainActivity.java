@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, "Permission denied: app cannot access to location",
                             Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 break;
             case REQUEST_WRITE_EXTERNAL_STORAGE_CODE:
