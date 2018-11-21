@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -88,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
             }
         } else {
-            HandlerGPXFile handlerGPX = new HandlerGPXFile(MainActivity.this, locations);
-            handlerGPX.writeGPXFile();
+            // TODO check if locations size > 0
+            GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
+            writer.writeGPXFile(new Date());
         }
     }
 
@@ -139,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permission granted: app can access to location",
                             Toast.LENGTH_SHORT).show();
+                    // TODO start location listener
                 } else {
                     Toast.makeText(this, "Permission denied: app cannot access to location",
                             Toast.LENGTH_SHORT).show();
@@ -149,11 +152,12 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 &&
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this,
-                            "Permission granted: app can read and write in external storage",
+                            "Permission granted: app can write in external storage",
                             Toast.LENGTH_SHORT).show();
+                    // TODO call gpx writer
                 } else {
                     Toast.makeText(this,
-                            "Permission denied: cannot read and write in external storage",
+                            "Permission denied: cannot write in external storage",
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
