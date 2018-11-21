@@ -30,15 +30,15 @@ public class MonitoringActivity extends AppCompatActivity {
         int hours   = (int) ((diff / (1000*60*60)) % 24);
 
         if (hours > 0) {
-            timeView.setText(String.format("%02dH%02dM%02ds", hours, minutes, seconds));
+            timeView.setText(String.format("%dh %dm %ds", hours, minutes, seconds));
         } else if (minutes > 0 ) {
-            timeView.setText(String.format("%02dM%02ds", minutes, seconds));
+            timeView.setText(String.format("%dm %ds", minutes, seconds));
         } else {
-            timeView.setText(String.format("%2ds", seconds));
+            timeView.setText(String.format("%ds", seconds));
         }
     }
 
-    private void displayRaceSummary() {
+    private void displayRaceOverview() {
 
         // distance views
         TextView distanceValueView = findViewById(R.id.distance_value);
@@ -100,7 +100,7 @@ public class MonitoringActivity extends AppCompatActivity {
                 if (nextAltitude > altitude) {
                     altGain += nextAltitude - altitude;
                 } else if (nextAltitude < altitude) {
-                    altLoss += altitude - nextAltitude;
+                    altLoss += nextAltitude - altitude;
                 }
             }
         }
@@ -142,6 +142,6 @@ public class MonitoringActivity extends AppCompatActivity {
         locations = intent.getParcelableArrayListExtra("locations");
 
         displayTimeRace();
-        displayRaceSummary();
+        displayRaceOverview();
     }
 }
