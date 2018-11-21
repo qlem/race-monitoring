@@ -1,7 +1,37 @@
 <resources>
     <string name="app_name">Race Monitoring</string>
+
     <string name="btn_start">START</string>
     <string name="btn_stop">STOP</string>
+
+    <string name="speed_label">speed</string>
+    <string name="speed_max_label">max</string>
+    <string name="speed_max_value">0</string>
+    <string name="speed_min_label">min</string>
+    <string name="speed_min_value">0</string>
+    <string name="speed_avg_label">avg</string>
+    <string name="speed_avg_value">0</string>
+    <string name="speed_unit">m/s</string>
+
+    <string name="distance_label">distance</string>
+    <string name="distance_value">0</string>
+    <string name="distance_unit_m">m</string>
+    <string name="distance_unit_km">km</string>
+
+    <string name="time_label">time</string>
+    <string name="time_value">0s</string>
+
+    <string name="elevation_label">altitude</string>
+    <string name="elevation_max_label">max</string>
+    <string name="elevation_max_value">0</string>
+    <string name="elevation_min_label">min</string>
+    <string name="elevation_min_value">0</string>
+    <string name="elevation_gain_label">gain</string>
+    <string name="elevation_gain_value">0</string>
+    <string name="elevation_loss_label">loss</string>
+    <string name="elevation_loss_value">0</string>
+    <string name="elevation_unit">m</string>
+
     <string name="permission_explanation">To do!</string>
     <string name="permission_exp_ok">OK</string>
     <string name="latitude">lat: 0</string>

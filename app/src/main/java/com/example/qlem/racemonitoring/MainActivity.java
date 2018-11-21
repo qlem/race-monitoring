@@ -2,10 +2,12 @@ package com.example.qlem.racemonitoring;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -114,6 +116,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 locationManager.removeUpdates(locationListener);
                 getWriteExternalStoragePermission();
+
+                Intent intent = new Intent(MainActivity.this, MonitoringActivity.class);
+                intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
+                startActivity(intent);
+
                 locations.clear();
                 setStartListenerMainButton();
             }
