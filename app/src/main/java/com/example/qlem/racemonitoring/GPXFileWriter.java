@@ -64,6 +64,7 @@ class GPXFileWriter {
             writer.append(footer);
             writer.flush();
             writer.close();
+            Toast.makeText(context ,"GPX file saved successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }

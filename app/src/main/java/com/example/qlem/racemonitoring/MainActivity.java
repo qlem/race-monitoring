@@ -91,9 +91,10 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
             }
         } else {
-            // TODO check if locations size > 0
-            GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
-            writer.writeGPXFile(new Date());
+            if (locations.size() > 0) {
+                GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
+                writer.writeGPXFile(new Date());
+            }
         }
     }
 

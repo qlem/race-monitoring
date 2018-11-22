@@ -38,8 +38,6 @@ public class RaceGraphView extends View {
     }
 
     private void init() {
-        maxAltitude = 0;
-        minAltitude = 0;
         pen = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
@@ -72,9 +70,11 @@ public class RaceGraphView extends View {
 
     @Override
     protected void onDraw (Canvas canvas) {
+
         if (locations == null) {
             return;
         }
+
         pen.setStrokeWidth(10);
         pen.setColor(Color.rgb(181, 59, 118));
         canvas.drawLine(0, HEIGHT_VIEW - 5, WIDTH_VIEW, HEIGHT_VIEW - 5, pen);

@@ -5,6 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.45" />
+
     <TextView
         android:id="@+id/distance_label"
         android:layout_width="wrap_content"
@@ -276,26 +290,12 @@
         app:layout_constraintTop_toTopOf="@+id/barrier2" />
 
     <android.support.constraint.Barrier
-        android:id="@+id/barrier"
+        android:id="@+id/barrier3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="elevation_max_label,elevation_max_value,elevation_min_label,elevation_min_value,elevation_gain_label,elevation_gain_value,elevation_loss_label,elevation_loss_value"
         tools:layout_editor_absoluteY="511dp" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.45" />
 
     <com.example.qlem.racemonitoring.RaceGraphView
         android:id="@+id/race_graph"
@@ -305,6 +305,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/barrier" />
+        app:layout_constraintTop_toTopOf="@+id/barrier3" />
 
 </android.support.constraint.ConstraintLayout>
