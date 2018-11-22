@@ -91,10 +91,8 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
             }
         } else {
-            if (locations.size() > 0) {
-                GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
+            GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
                 writer.writeGPXFile(new Date());
-            }
         }
     }
 
@@ -115,7 +113,16 @@ public class MainActivity extends AppCompatActivity {
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 locationManager.removeUpdates(locationListener);
+                setStartListenerMainButton();
+
+                if (locations.size() == 0) {
+                    Toast.makeText(MainActivity.this,
+                            "No location data, nothing to display", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 getWriteExternalStoragePermission();
 
                 Intent intent = new Intent(MainActivity.this, MonitoringActivity.class);
@@ -123,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 locations.clear();
-                setStartListenerMainButton();
             }
         });
     }

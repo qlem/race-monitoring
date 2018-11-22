@@ -142,12 +142,6 @@ public class MonitoringActivity extends AppCompatActivity {
         Intent intent = getIntent();
         locations = intent.getParcelableArrayListExtra("locations");
 
-        if (locations.size() == 0) {
-            Toast.makeText(this, "No location data, nothing to display",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         RaceGraphView raceGraph = findViewById(R.id.race_graph);
         raceGraph.setCollection(locations);
 
