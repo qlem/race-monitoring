@@ -98,9 +98,9 @@ public class MonitoringActivity extends AppCompatActivity {
                 distance += current.distanceTo(locations.get(i + 1));
                 double nextAltitude = locations.get(i + 1).getAltitude();
                 if (nextAltitude > altitude) {
-                    altGain += nextAltitude - altitude;
+                    altGain += (nextAltitude - altitude);
                 } else if (nextAltitude < altitude) {
-                    altLoss += nextAltitude - altitude;
+                    altLoss += (nextAltitude - altitude);
                 }
             }
         }

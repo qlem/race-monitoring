@@ -105,17 +105,17 @@ public class RaceGraphView extends View {
 
                 currentAltitude = (float) locations.get(i).getAltitude();
                 nextAltitude = (float) locations.get(i + 1).getAltitude();
-                startYAlt =  (currentAltitude - (float) minAltitude) * HEIGHT_VIEW / diffAltitude;
+                startYAlt = (currentAltitude - (float) minAltitude) * HEIGHT_VIEW / diffAltitude;
                 stopYAlt = (nextAltitude - (float) minAltitude) * HEIGHT_VIEW / diffAltitude;
                 pen.setColor(Color.rgb(84, 108, 54));
-                canvas.drawLine(startX, startYAlt, stopX, stopYAlt, pen);
+                canvas.drawLine(startX, HEIGHT_VIEW - startYAlt, stopX, HEIGHT_VIEW - stopYAlt, pen);
 
                 currentSpeed = locations.get(i).getAccuracy();
                 nextSpeed = locations.get(i + 1).getAccuracy();
-                startYSpeed =  (currentSpeed - (float) minSpeed) * HEIGHT_VIEW / diffSpeed;
+                startYSpeed = (currentSpeed - (float) minSpeed) * HEIGHT_VIEW / diffSpeed;
                 stopYSpeed = (nextSpeed - (float) minSpeed) * HEIGHT_VIEW / diffSpeed;
                 pen.setColor(Color.rgb(221, 149, 48));
-                canvas.drawLine(startX, startYSpeed, stopX, stopYSpeed, pen);
+                canvas.drawLine(startX, HEIGHT_VIEW - startYSpeed, stopX, HEIGHT_VIEW - stopYSpeed, pen);
             }
         }
     }
