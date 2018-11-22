@@ -141,6 +141,9 @@ public class MonitoringActivity extends AppCompatActivity {
         Intent intent = getIntent();
         locations = intent.getParcelableArrayListExtra("locations");
 
+        RaceGraphView raceGraph = findViewById(R.id.race_graph);
+        raceGraph.setCollection(locations);
+
         displayTimeRace();
         displayRaceOverview();
     }
