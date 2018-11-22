@@ -71,14 +71,14 @@ public class RaceGraphView extends View {
     @Override
     protected void onDraw (Canvas canvas) {
 
-        if (locations == null) {
-            return;
-        }
-
         pen.setStrokeWidth(10);
         pen.setColor(Color.rgb(181, 59, 118));
         canvas.drawLine(0, HEIGHT_VIEW - 5, WIDTH_VIEW, HEIGHT_VIEW - 5, pen);
         canvas.drawLine(5, 0, 5, HEIGHT_VIEW, pen);
+
+        if (locations == null) {
+            return;
+        }
 
         float startX;
         float stopX;

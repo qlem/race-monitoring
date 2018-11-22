@@ -41,7 +41,7 @@ class GPXFileWriter {
         }
 
         SimpleDateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault());
-        String fileName = String.format("Race Monitoring GPX %s.gpx", isoDate.format(now));
+        String fileName = String.format("%s Race Monitoring.gpx", isoDate.format(now));
         File file = new File(dir, fileName);
 
         String header = "<gpx creator=\"Race Monitoring\" version=\"1.1\">\n";
