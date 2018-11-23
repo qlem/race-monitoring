@@ -75,16 +75,16 @@ public class RaceGraphView extends View {
             return;
         }
 
-        int offset = 10;
-        int widthOffset = WIDTH_VIEW - (2 * offset);
-        int heightOffset = HEIGHT_VIEW - (2 * offset);
-
         pen.setStrokeWidth(10);
         pen.setColor(Color.rgb(181, 59, 118));
         canvas.drawLine(0, HEIGHT_VIEW - 5, WIDTH_VIEW, HEIGHT_VIEW - 5, pen);
         canvas.drawLine(5, 0, 5, HEIGHT_VIEW, pen);
         // canvas.drawLine(0, 5, WIDTH_VIEW, 5, pen);
         // canvas.drawLine(WIDTH_VIEW - 5, 0, WIDTH_VIEW - 5, HEIGHT_VIEW, pen);
+
+        int offset = 10;
+        int widthOffset = WIDTH_VIEW - (2 * offset);
+        int heightOffset = HEIGHT_VIEW - (2 * offset);
 
         float startX;
         float stopX;

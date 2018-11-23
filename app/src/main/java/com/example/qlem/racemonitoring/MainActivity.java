@@ -24,6 +24,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    MonitoringState monitoringState;
     private final int REQUEST_LOCATION_CODE = 1;
     private final int REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 2;
     LocationManager locationManager;
@@ -72,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
                     0, locationListener);
-            setStopListenerMainButton();
+            monitoringState = MonitoringState.ENABLED;
+            setStopMonitoringButton();
         }
     }
 
@@ -96,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setStartListenerMainButton() {
+    private void setStartMonitoringButton() {
         Button mainButton = findViewById(R.id.main_button);
         mainButton.setText(R.string.btn_start);
         mainButton.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setStopListenerMainButton() {
+    private void setStopMonitoringButton() {
         Button mainButton = findViewById(R.id.main_button);
         mainButton.setText(R.string.btn_stop);
         mainButton.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +117,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 locationManager.removeUpdates(locationListener);
-                setStartListenerMainButton();
+                monitoringState = MonitoringState.DISABLED;
+                setStartMonitoringButton();
 
                 if (locations.size() == 0) {
                     Toast.makeText(MainActivity.this,
@@ -139,11 +142,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        monitoringState = MonitoringState.DISABLED;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         locations = new ArrayList<>();
-
-        setStartListenerMainButton();
+        setStartMonitoringButton();
     }
 
     @Override
@@ -175,6 +177,25 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        outState.putString("monitoringState", monitoringState.name());
+        if (monitoringState == MonitoringState.ENABLED) {
+            outState.putParcelableArrayList("locations", (ArrayList<? extends Parcelable>) locations);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+        String state = savedInstanceState.getString("monitoringState");
+        if (state != null && state.equals(MonitoringState.ENABLED.name())) {
+            monitoringState = MonitoringState.ENABLED;
+            locations = savedInstanceState.getParcelableArrayList("locations");
+            getLocationPermission();
         }
     }
 }
