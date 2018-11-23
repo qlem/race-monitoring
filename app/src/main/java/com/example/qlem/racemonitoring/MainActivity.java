@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void recordingLocation() {
-        if (ActivityCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "App cannot access to location: permission denied",
                     Toast.LENGTH_SHORT).show();
@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void writeGPXFile() {
-        if (ActivityCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "App cannot access to external storage for saving GPX file: permission denied",
+            Toast.makeText(this, "App cannot access to external storage for save GPX file: permission denied",
                     Toast.LENGTH_SHORT).show();
             return;
         }
