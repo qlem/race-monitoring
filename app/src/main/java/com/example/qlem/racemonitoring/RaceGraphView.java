@@ -71,14 +71,20 @@ public class RaceGraphView extends View {
     @Override
     protected void onDraw (Canvas canvas) {
 
+        if (locations == null) {
+            return;
+        }
+
+        int offset = 10;
+        int widthOffset = WIDTH_VIEW - (2 * offset);
+        int heightOffset = HEIGHT_VIEW - (2 * offset);
+
         pen.setStrokeWidth(10);
         pen.setColor(Color.rgb(181, 59, 118));
         canvas.drawLine(0, HEIGHT_VIEW - 5, WIDTH_VIEW, HEIGHT_VIEW - 5, pen);
         canvas.drawLine(5, 0, 5, HEIGHT_VIEW, pen);
-
-        if (locations == null) {
-            return;
-        }
+        // canvas.drawLine(0, 5, WIDTH_VIEW, 5, pen);
+        // canvas.drawLine(WIDTH_VIEW - 5, 0, WIDTH_VIEW - 5, HEIGHT_VIEW, pen);
 
         float startX;
         float stopX;
@@ -100,22 +106,22 @@ public class RaceGraphView extends View {
         for (int i = 0; i < nbPoints; i++) {
             if (i < nbPoints - 1) {
 
-                startX = i * WIDTH_VIEW / (nbPoints - 1);
-                stopX = (i + 1) * WIDTH_VIEW / (nbPoints - 1);
+                startX = i * widthOffset / (nbPoints - 1) + offset;
+                stopX = (i + 1) * widthOffset / (nbPoints - 1) + offset;
 
                 currentAltitude = (float) locations.get(i).getAltitude();
                 nextAltitude = (float) locations.get(i + 1).getAltitude();
-                startYAlt = (currentAltitude - (float) minAltitude) * HEIGHT_VIEW / diffAltitude;
-                stopYAlt = (nextAltitude - (float) minAltitude) * HEIGHT_VIEW / diffAltitude;
+                startYAlt = (currentAltitude - (float) minAltitude) * heightOffset / diffAltitude - offset;
+                stopYAlt = (nextAltitude - (float) minAltitude) * heightOffset / diffAltitude - offset;
                 pen.setColor(Color.rgb(84, 108, 54));
-                canvas.drawLine(startX, HEIGHT_VIEW - startYAlt, stopX, HEIGHT_VIEW - stopYAlt, pen);
+                canvas.drawLine(startX, heightOffset - startYAlt, stopX, heightOffset - stopYAlt, pen);
 
                 currentSpeed = locations.get(i).getAccuracy();
                 nextSpeed = locations.get(i + 1).getAccuracy();
-                startYSpeed = (currentSpeed - (float) minSpeed) * HEIGHT_VIEW / diffSpeed;
-                stopYSpeed = (nextSpeed - (float) minSpeed) * HEIGHT_VIEW / diffSpeed;
+                startYSpeed = (currentSpeed - (float) minSpeed) * heightOffset / diffSpeed - offset;
+                stopYSpeed = (nextSpeed - (float) minSpeed) * heightOffset / diffSpeed - offset;
                 pen.setColor(Color.rgb(221, 149, 48));
-                canvas.drawLine(startX, HEIGHT_VIEW - startYSpeed, stopX, HEIGHT_VIEW - stopYSpeed, pen);
+                canvas.drawLine(startX, heightOffset - startYSpeed, stopX, heightOffset - stopYSpeed, pen);
             }
         }
     }
@@ -126,7 +132,7 @@ public class RaceGraphView extends View {
         int heightScreen = MeasureSpec.getSize(heightMeasureSpec);
         if (widthScreen < heightScreen) {
             WIDTH_VIEW = (int) (widthScreen * 0.85);
-            HEIGHT_VIEW = (int) (widthScreen * 0.45);
+            HEIGHT_VIEW = (int) (heightScreen * 0.3);
         } else {
             WIDTH_VIEW = (int) (widthScreen * 0.45);
             HEIGHT_VIEW = (int) (heightScreen * 0.5);
