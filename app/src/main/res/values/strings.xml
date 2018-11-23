@@ -31,7 +31,4 @@
     <string name="elevation_loss_label">loss</string>
     <string name="elevation_loss_value">0</string>
     <string name="elevation_unit">m</string>
-
-    <string name="permission_explanation">To do!</string>
-    <string name="permission_exp_ok">OK</string>
 </resources>
