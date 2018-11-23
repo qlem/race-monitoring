@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
                 0, locationListener);
-        monitoringState = MonitoringState.ENABLED;
+        monitoringState = MonitoringState.RECORDING;
         recordingIndicator.startRecording();
         switchButtonStateToStop();
     }
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 locationManager.removeUpdates(locationListener);
-                monitoringState = MonitoringState.DISABLED;
+                monitoringState = MonitoringState.STOPPED;
                 recordingIndicator.stopRecording();
                 switchButtonStateToStart();
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         recordingIndicator = findViewById(R.id.recording_indicator);
         mainButton = findViewById(R.id.main_button);
 
-        monitoringState = MonitoringState.DISABLED;
+        monitoringState = MonitoringState.STOPPED;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locations = new ArrayList<>();
         switchButtonStateToStart();
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState (Bundle outState) {
         outState.putString("monitoringState", monitoringState.name());
-        if (monitoringState == MonitoringState.ENABLED) {
+        if (monitoringState == MonitoringState.RECORDING) {
             outState.putParcelableArrayList("locations", (ArrayList<? extends Parcelable>) locations);
         }
         super.onSaveInstanceState(outState);
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         String state = savedInstanceState.getString("monitoringState");
-        if (state != null && state.equals(MonitoringState.ENABLED.name())) {
+        if (state != null && state.equals(MonitoringState.RECORDING.name())) {
             locations = savedInstanceState.getParcelableArrayList("locations");
             recordingLocation();
         }
