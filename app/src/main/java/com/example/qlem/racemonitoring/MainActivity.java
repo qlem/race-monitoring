@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSION_CODE = 1;
     LocationManager locationManager;
     List<Location> locations;
+    Button mainButton;
     RecordingIndicatorView recordingIndicator;
 
     LocationListener locationListener = new LocationListener() {
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 0, locationListener);
         monitoringState = MonitoringState.ENABLED;
         recordingIndicator.startRecording();
-        setStopMonitoringButton();
+        switchButtonStateToStop();
     }
 
     private void writeGPXFile() {
@@ -83,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO use ActivityCompat.shouldShowRequestPermissionRationale
     }
 
-    private void setStartMonitoringButton() {
-        Button mainButton = findViewById(R.id.main_button);
+    private void switchButtonStateToStart() {
         mainButton.setText(R.string.btn_start);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,8 +94,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setStopMonitoringButton() {
-        Button mainButton = findViewById(R.id.main_button);
+    private void switchButtonStateToStop() {
         mainButton.setText(R.string.btn_stop);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 locationManager.removeUpdates(locationListener);
                 monitoringState = MonitoringState.DISABLED;
                 recordingIndicator.stopRecording();
-                setStartMonitoringButton();
+                switchButtonStateToStart();
 
                 if (locations.size() == 0) {
                     Toast.makeText(MainActivity.this,
@@ -131,10 +130,12 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
 
         recordingIndicator = findViewById(R.id.recording_indicator);
+        mainButton = findViewById(R.id.main_button);
+
         monitoringState = MonitoringState.DISABLED;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locations = new ArrayList<>();
-        setStartMonitoringButton();
+        switchButtonStateToStart();
     }
 
     @Override
@@ -144,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this, "Permission denied: app cannot access to location",
                             Toast.LENGTH_SHORT).show();
-                } else if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                }
+                if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this, "Permission denied: app cannot access to external storage",
                             Toast.LENGTH_SHORT).show();
                 }
