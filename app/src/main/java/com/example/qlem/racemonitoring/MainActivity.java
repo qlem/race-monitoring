@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private void recordingLocation() {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "App cannot access to location: permission denied",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
@@ -57,6 +59,17 @@ public class MainActivity extends AppCompatActivity {
         monitoringState = MonitoringState.ENABLED;
         recordingIndicator.startRecording();
         setStopMonitoringButton();
+    }
+
+    private void writeGPXFile() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "App cannot access to external storage for saving GPX file: permission denied",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
+        writer.writeGPXFile(new Date());
     }
 
     private void checkPermissions() {
@@ -99,9 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // TODO check permission
-                GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
-                writer.writeGPXFile(new Date());
+                writeGPXFile();
 
                 Intent intent = new Intent(MainActivity.this, RaceReportActivity.class);
                 intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
