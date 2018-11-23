@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,12 +28,13 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 2;
     LocationManager locationManager;
     List<Location> locations;
+    RecordingIndicatorView recordingIndicator;
 
     LocationListener locationListener = new LocationListener() {
 
         @Override
         public void onLocationChanged(Location location) {
-            updateUI(location);
+            recordingIndicator.locationUpdate();
             locations.add(location);
         }
 
@@ -47,14 +47,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onProviderDisabled(String provider) {}
     };
-
-    // For test
-    private void updateUI(Location location) {
-        TextView latitudeView = findViewById(R.id.latitude);
-        TextView longitudeView = findViewById(R.id.longitude);
-        latitudeView.setText(String.format("lat: %s", location.getLatitude()));
-        longitudeView.setText(String.format("lon: %s", location.getLongitude()));
-    }
 
     private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
@@ -74,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
                     0, locationListener);
             monitoringState = MonitoringState.ENABLED;
+            recordingIndicator.startRecording();
             setStopMonitoringButton();
         }
     }
@@ -118,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
                 locationManager.removeUpdates(locationListener);
                 monitoringState = MonitoringState.DISABLED;
+                recordingIndicator.stopRecording();
                 setStartMonitoringButton();
 
                 if (locations.size() == 0) {
@@ -142,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        recordingIndicator = findViewById(R.id.recording_indicator);
         monitoringState = MonitoringState.DISABLED;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locations = new ArrayList<>();
@@ -193,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
         String state = savedInstanceState.getString("monitoringState");
         if (state != null && state.equals(MonitoringState.ENABLED.name())) {
-            monitoringState = MonitoringState.ENABLED;
             locations = savedInstanceState.getParcelableArrayList("locations");
             getLocationPermission();
         }

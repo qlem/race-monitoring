@@ -34,6 +34,4 @@
 
     <string name="permission_explanation">To do!</string>
     <string name="permission_exp_ok">OK</string>
-    <string name="latitude">lat: 0</string>
-    <string name="longitude">lon: 0</string>
 </resources>

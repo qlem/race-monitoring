@@ -136,7 +136,7 @@ public class RaceReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monitoring);
+        setContentView(R.layout.activity_race_report);
 
         Intent intent = getIntent();
         locations = intent.getParcelableArrayListExtra("locations");
