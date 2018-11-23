@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.text.NumberFormat;
 import java.util.List;
 
-public class MonitoringActivity extends AppCompatActivity {
+public class RaceReportActivity extends AppCompatActivity {
 
     List<Location> locations;
 

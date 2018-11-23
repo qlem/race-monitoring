@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
                 getWriteExternalStoragePermission();
 
-                Intent intent = new Intent(MainActivity.this, MonitoringActivity.class);
+                Intent intent = new Intent(MainActivity.this, RaceReportActivity.class);
                 intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
                 startActivity(intent);
 

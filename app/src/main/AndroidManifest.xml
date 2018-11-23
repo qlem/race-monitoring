@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MonitoringActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".RaceReportActivity" android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>
