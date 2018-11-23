@@ -24,8 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     MonitoringState monitoringState;
-    private final int REQUEST_LOCATION_CODE = 1;
-    private final int REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 2;
+    private final int REQUEST_PERMISSION_CODE = 1;
     LocationManager locationManager;
     List<Location> locations;
     RecordingIndicatorView recordingIndicator;
@@ -48,47 +47,27 @@ public class MainActivity extends AppCompatActivity {
         public void onProviderDisabled(String provider) {}
     };
 
-    private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this,
+    private void recordingLocation() {
+        if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // TODO explain why app needs permission (popup)
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_LOCATION_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_LOCATION_CODE);
-            }
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
-                    0, locationListener);
-            monitoringState = MonitoringState.ENABLED;
-            recordingIndicator.startRecording();
-            setStopMonitoringButton();
+            return;
         }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+                0, locationListener);
+        monitoringState = MonitoringState.ENABLED;
+        recordingIndicator.startRecording();
+        setStopMonitoringButton();
     }
 
-    private void getWriteExternalStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // TODO explain why app needs permission (popup)
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_WRITE_EXTERNAL_STORAGE_CODE);
-            }
-        } else {
-            GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
-                writer.writeGPXFile(new Date());
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
         }
+        // TODO use ActivityCompat.shouldShowRequestPermissionRationale
     }
 
     private void setStartMonitoringButton() {
@@ -97,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getLocationPermission();
+                recordingLocation();
             }
         });
     }
@@ -120,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                getWriteExternalStoragePermission();
+                // TODO check permission
+                GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
+                writer.writeGPXFile(new Date());
 
                 Intent intent = new Intent(MainActivity.this, RaceReportActivity.class);
                 intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
@@ -136,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkPermissions();
+
         recordingIndicator = findViewById(R.id.recording_indicator);
         monitoringState = MonitoringState.DISABLED;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -144,31 +127,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_LOCATION_CODE:
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission granted: app can access to location",
-                            Toast.LENGTH_SHORT).show();
-                    // TODO start location listener
-                } else {
+            case REQUEST_PERMISSION_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this, "Permission denied: app cannot access to location",
                             Toast.LENGTH_SHORT).show();
                     finish();
-                }
-                break;
-            case REQUEST_WRITE_EXTERNAL_STORAGE_CODE:
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this,
-                            "Permission granted: app can write in external storage",
-                            Toast.LENGTH_SHORT).show();
-                    // TODO call gpx writer
-                } else {
-                    Toast.makeText(this,
-                            "Permission denied: cannot write in external storage",
+                } else if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(this, "Permission denied: app cannot access to external storage",
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -189,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         String state = savedInstanceState.getString("monitoringState");
         if (state != null && state.equals(MonitoringState.ENABLED.name())) {
             locations = savedInstanceState.getParcelableArrayList("locations");
-            getLocationPermission();
+            recordingLocation();
         }
     }
 }
