@@ -27,7 +27,7 @@ class GPXFileWriter {
     void writeGPXFile(Date now) {
         boolean state = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
         if (!state) {
-            Toast.makeText(context, "External storage is not available for write",
+            Toast.makeText(context, "External storage is not available",
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -67,6 +67,7 @@ class GPXFileWriter {
             Toast.makeText(context ,"GPX file saved successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(context, "Error saving GPX file", Toast.LENGTH_SHORT).show();
         }
     }
 }
