@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this, "Permission denied: app cannot access to location",
                             Toast.LENGTH_SHORT).show();
-                    finish();
                 } else if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this, "Permission denied: app cannot access to external storage",
                             Toast.LENGTH_SHORT).show();
