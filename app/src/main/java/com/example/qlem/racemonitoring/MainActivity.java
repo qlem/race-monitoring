@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,44 +25,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    MonitoringState monitoringState;
+    // MonitoringState monitoringState;
     private final int REQUEST_PERMISSION_CODE = 1;
-    LocationManager locationManager;
     List<Location> locations;
     Button mainButton;
     RecordingIndicatorView recordingIndicator;
-
-    LocationListener locationListener = new LocationListener() {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            recordingIndicator.locationUpdate();
-            locations.add(location);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-        @Override
-        public void onProviderEnabled(String provider) {}
-
-        @Override
-        public void onProviderDisabled(String provider) {}
-    };
-
-    private void recordingLocation() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "App cannot access to location: permission denied",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
-                0, locationListener);
-        monitoringState = MonitoringState.RECORDING;
-        recordingIndicator.startRecording();
-        switchButtonStateToStop();
-    }
 
     private void writeGPXFile() {
         if (ContextCompat.checkSelfPermission(this,
@@ -88,48 +53,36 @@ public class MainActivity extends AppCompatActivity {
         // TODO use ActivityCompat.shouldShowRequestPermissionRationale
     }
 
-    private void switchButtonStateToStart() {
+    public void switchButtonStateToStart() {
         mainButton.setText(R.string.btn_start);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // recordingLocation();
 
+                // switch button to stop
+                recordingIndicator.startRecording();
                 switchButtonStateToStop();
 
+                // start service
                 Intent intent = new Intent(MainActivity.this, LocationService.class);
                 startService(intent);
             }
         });
     }
 
-    private void switchButtonStateToStop() {
+    public void switchButtonStateToStop() {
         mainButton.setText(R.string.btn_stop);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(MainActivity.this, LocationService.class);
-                stopService(intent);
-
-                // locationManager.removeUpdates(locationListener);
-                monitoringState = MonitoringState.STOPPED;
+                // switch button to stop
                 recordingIndicator.stopRecording();
                 switchButtonStateToStart();
 
-                if (locations.size() == 0) {
-                    Toast.makeText(MainActivity.this,
-                            "No location data, nothing to display", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                /* writeGPXFile();
-
-                Intent intent = new Intent(MainActivity.this, RaceReportActivity.class);
-                intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-                startActivity(intent);
-
-                locations.clear(); */
+                // stop the service
+                Intent intent = new Intent(MainActivity.this, LocationService.class);
+                stopService(intent);
             }
         });
     }
@@ -140,9 +93,25 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (action != null) {
                 if (action.equals(LocationService.ACTION_PONG)) {
+                    recordingIndicator.startRecording();
                     switchButtonStateToStop();
+                } else if (action.equals(LocationService.ACTION_UPDATE)) {
+                    recordingIndicator.locationUpdate();
                 } else if (action.equals(LocationService.ACTION_STOP)) {
                     locations = intent.getParcelableArrayListExtra("locations");
+                    if (locations.size() == 0) {
+                        Toast.makeText(MainActivity.this,
+                                "No location data, nothing to display", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    writeGPXFile();
+
+                    intent = new Intent(MainActivity.this, RaceReportActivity.class);
+                    intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
+                    startActivity(intent);
+
+                    locations.clear();
                 }
             }
         }
@@ -163,14 +132,13 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(LocationService.ACTION_PONG);
         intentFilter.addAction(LocationService.ACTION_STOP);
+        intentFilter.addAction(LocationService.ACTION_UPDATE);
         registerReceiver(broadcastReceiver, intentFilter);
 
-        // ping service for check if service is running
+        // ping the service for check if it is running
         sendBroadcast(new Intent(LocationService.ACTION_PING));
 
-        monitoringState = MonitoringState.STOPPED;
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locations = new ArrayList<>();
+        // switch button to start
         switchButtonStateToStart();
     }
 
@@ -190,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    /* @Override
     protected void onSaveInstanceState (Bundle outState) {
         outState.putString("monitoringState", monitoringState.name());
         if (monitoringState == MonitoringState.RECORDING) {
@@ -206,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             locations = savedInstanceState.getParcelableArrayList("locations");
             recordingLocation();
         }
-    }
+    } */
 
     @Override
     protected void onDestroy() {

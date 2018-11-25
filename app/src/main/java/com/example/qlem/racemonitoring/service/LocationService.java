@@ -1,5 +1,6 @@
 package com.example.qlem.racemonitoring.service;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,14 +10,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.HandlerThread;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
 import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
-import android.os.Process;
 
 import com.example.qlem.racemonitoring.MainActivity;
 import com.example.qlem.racemonitoring.R;
@@ -26,20 +28,55 @@ import java.util.List;
 
 public class LocationService extends Service {
 
-    List<Location> locations;
+    // private ServiceHandler serviceHandler;
 
-    private ServiceHandler serviceHandler;
+    LocationManager locationManager;
+    List<Location> locations;
     public static final String ACTION_PING = LocationService.class.getName() + ".PING";
     public static final String ACTION_PONG = LocationService.class.getName() + ".PONG";
+    public static final String ACTION_UPDATE = LocationService.class.getName() + ".UPDATE";
     public static final String ACTION_STOP = LocationService.class.getName() + ".STOP";
+
+    LocationListener locationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            locations.add(location);
+            sendBroadcast(new Intent(ACTION_UPDATE));
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+    };
+
+    private void recordingLocation() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "App cannot access to location: permission denied",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+                0, locationListener);
+    }
 
     @Override
     public void onCreate() {
-        HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
+        /* HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
 
         Looper looper = thread.getLooper();
-        serviceHandler = new ServiceHandler(looper, this);
+        serviceHandler = new ServiceHandler(looper, this); */
+
+        locations = new ArrayList<>();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        recordingLocation();
 
         Toast.makeText(this, "service create", Toast.LENGTH_SHORT).show();
     }
@@ -92,13 +129,9 @@ public class LocationService extends Service {
         // register the broadcast receiver
         registerReceiver(broadcastReceiver, new IntentFilter(ACTION_PING));
 
-        Message msg = serviceHandler.obtainMessage();
+        /* Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
-        serviceHandler.sendMessage(msg);
-
-        locations = new ArrayList<>();
-        locations.add(new Location("ok"));
-        locations.add(new Location("ok"));
+        serviceHandler.sendMessage(msg); */
 
         return START_STICKY;
     }
@@ -110,6 +143,8 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
+
+        locationManager.removeUpdates(locationListener);
 
         Intent intent = new Intent(ACTION_STOP);
         intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
