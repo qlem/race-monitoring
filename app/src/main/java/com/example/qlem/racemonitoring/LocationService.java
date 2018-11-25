@@ -14,10 +14,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,6 @@ public class LocationService extends Service {
 
     private LocationManager locationManager;
     private List<Location> locations;
-    private String CHANNEL_ID = "RMSChannel";
     public static final String ACTION_PING = LocationService.class.getName() + ".PING";
     public static final String ACTION_PONG = LocationService.class.getName() + ".PONG";
     public static final String ACTION_UPDATE = LocationService.class.getName() + ".UPDATE";
@@ -65,7 +66,14 @@ public class LocationService extends Service {
         }
     };
 
-    private void createNotificationChannel() {
+    private void startForeground() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        String CHANNEL_ID = "RMSChannel";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -73,17 +81,9 @@ public class LocationService extends Service {
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-    }
+        }
 
-    private void startForeground() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        createNotificationChannel();
-
-        Notification notification =
-                new Notification.Builder(this, CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle(getString(R.string.notification_title))
                         .setContentText(getString(R.string.notification_text))
                         .setSmallIcon(R.drawable.ic_service)
