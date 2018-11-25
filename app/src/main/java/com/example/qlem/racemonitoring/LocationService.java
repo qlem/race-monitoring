@@ -1,6 +1,6 @@
-package com.example.qlem.racemonitoring.service;
+package com.example.qlem.racemonitoring;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,25 +10,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
-
-import com.example.qlem.racemonitoring.MainActivity;
-import com.example.qlem.racemonitoring.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocationService extends Service {
-
-    // private ServiceHandler serviceHandler;
 
     LocationManager locationManager;
     List<Location> locations;
@@ -55,30 +48,14 @@ public class LocationService extends Service {
         public void onProviderDisabled(String provider) {}
     };
 
-    private void recordingLocation() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "App cannot access to location: permission denied",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
-                0, locationListener);
-    }
-
+    @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
-        /* HandlerThread thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        Looper looper = thread.getLooper();
-        serviceHandler = new ServiceHandler(looper, this); */
 
         locations = new ArrayList<>();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        recordingLocation();
-
-        Toast.makeText(this, "service create", Toast.LENGTH_SHORT).show();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
+                0, locationListener);
     }
 
     private void createNotificationChannel() {
@@ -129,11 +106,7 @@ public class LocationService extends Service {
         // register the broadcast receiver
         registerReceiver(broadcastReceiver, new IntentFilter(ACTION_PING));
 
-        /* Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = startId;
-        serviceHandler.sendMessage(msg); */
-
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -151,6 +124,5 @@ public class LocationService extends Service {
         sendBroadcast(intent);
 
         unregisterReceiver(broadcastReceiver);
-        Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
 }

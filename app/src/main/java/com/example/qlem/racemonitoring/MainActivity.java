@@ -17,8 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.qlem.racemonitoring.service.LocationService;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         writer.writeGPXFile(new Date());
     }
 
-    private void checkPermissions() {
+    private void askPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
@@ -58,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MainActivity.this, "App cannot access to location: permission denied",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 // switch button to stop
                 recordingIndicator.startRecording();
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     recordingIndicator.locationUpdate();
                 } else if (action.equals(LocationService.ACTION_STOP)) {
                     locations = intent.getParcelableArrayListExtra("locations");
-                    if (locations.size() == 0) {
+                    if (locations == null || locations.size() == 0) {
                         Toast.makeText(MainActivity.this,
                                 "No location data, nothing to display", Toast.LENGTH_SHORT).show();
                         return;
@@ -125,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
         recordingIndicator = findViewById(R.id.recording_indicator);
         mainButton = findViewById(R.id.main_button);
 
-        // check permissions
-        checkPermissions();
+        // ask permissions
+        askPermissions();
 
         // init broadcast receiver
         IntentFilter intentFilter = new IntentFilter();

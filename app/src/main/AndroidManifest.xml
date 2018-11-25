@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".RaceReportActivity" android:parentActivityName=".MainActivity"/>
 
-        <service android:name=".service.LocationService" />
+        <service android:name=".LocationService" />
     </application>
 
 </manifest>
