@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     Button mainButton;
     RecordingIndicatorView recordingIndicator;
 
-    // MonitoringState monitoringState;
-
     private void switchToRecordingMode() {
         mainButton.setText(R.string.btn_stop);
         mainButton.setOnClickListener(new View.OnClickListener() {
@@ -163,24 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
-    /* @Override
-    protected void onSaveInstanceState (Bundle outState) {
-        outState.putString("monitoringState", monitoringState.name());
-        if (monitoringState == MonitoringState.RECORDING) {
-            outState.putParcelableArrayList("locations", (ArrayList<? extends Parcelable>) locations);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState (Bundle savedInstanceState) {
-        String state = savedInstanceState.getString("monitoringState");
-        if (state != null && state.equals(MonitoringState.RECORDING.name())) {
-            locations = savedInstanceState.getParcelableArrayList("locations");
-            recordingLocation();
-        }
-    } */
 
     @Override
     protected void onDestroy() {

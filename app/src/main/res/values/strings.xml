@@ -4,6 +4,14 @@
     <string name="btn_start">START</string>
     <string name="btn_stop">STOP</string>
 
+    <string name="time_label">time</string>
+    <string name="time_value">0s</string>
+
+    <string name="distance_label">distance</string>
+    <string name="distance_value">0</string>
+    <string name="distance_unit_m">m</string>
+    <string name="distance_unit_km">km</string>
+
     <string name="speed_label">speed</string>
     <string name="speed_max_label">max</string>
     <string name="speed_max_value">0</string>
@@ -12,14 +20,6 @@
     <string name="speed_avg_label">avg</string>
     <string name="speed_avg_value">0</string>
     <string name="speed_unit">m/s</string>
-
-    <string name="distance_label">distance</string>
-    <string name="distance_value">0</string>
-    <string name="distance_unit_m">m</string>
-    <string name="distance_unit_km">km</string>
-
-    <string name="time_label">time</string>
-    <string name="time_value">0s</string>
 
     <string name="elevation_label">altitude</string>
     <string name="elevation_max_label">max</string>
@@ -33,7 +33,7 @@
     <string name="elevation_unit">m</string>
     
     <string name="notification_title">Race Monitoring Service</string>
-    <string name="notification_text">Records GPS points of your race.</string>
+    <string name="notification_text">Records coordinates GPS of your race.</string>
     <string name="notification_ticker">Race Monitoring Service</string>
     <string name="channel_name">Default Channel</string>
     <string name="channel_description">Default Channel</string>
