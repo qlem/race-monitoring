@@ -30,29 +30,24 @@ public class MainActivity extends AppCompatActivity {
 
     // MonitoringState monitoringState;
 
-    private void writeGPXFile() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "App cannot save GPX file: permission denied",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
-        writer.writeGPXFile(new Date());
+    private void switchToRecordingMode() {
+        mainButton.setText(R.string.btn_stop);
+        mainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // switch button to stop
+                recordingIndicator.stopRecording();
+                switchToReadyToGoMode();
+
+                // stop the service
+                Intent intent = new Intent(MainActivity.this, LocationService.class);
+                stopService(intent);
+            }
+        });
     }
 
-    private void askPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                        PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
-        }
-        // TODO use ActivityCompat.shouldShowRequestPermissionRationale
-    }
-
-    public void switchButtonStateToStart() {
+    private void switchToReadyToGoMode() {
         mainButton.setText(R.string.btn_start);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // switch button to stop
                 recordingIndicator.startRecording();
-                switchButtonStateToStop();
+                switchToRecordingMode();
 
                 // start service
                 Intent intent = new Intent(MainActivity.this, LocationService.class);
@@ -76,22 +71,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void switchButtonStateToStop() {
-        mainButton.setText(R.string.btn_stop);
-        mainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // switch button to stop
-                recordingIndicator.stopRecording();
-                switchButtonStateToStart();
-
-                // stop the service
-                Intent intent = new Intent(MainActivity.this, LocationService.class);
-                intent.putExtra("STOP", 1);
-                startService(intent);
-            }
-        });
+    private void writeGPXFile() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "App cannot save GPX file: permission denied",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        GPXFileWriter writer = new GPXFileWriter(MainActivity.this, locations);
+        writer.writeGPXFile(new Date());
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -101,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             if (action != null) {
                 if (action.equals(LocationService.ACTION_PONG)) {
                     recordingIndicator.startRecording();
-                    switchButtonStateToStop();
+                    switchToRecordingMode();
                 } else if (action.equals(LocationService.ACTION_UPDATE)) {
                     recordingIndicator.locationUpdate();
                 } else if (action.equals(LocationService.ACTION_STOP)) {
@@ -124,6 +112,17 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void askPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE);
+        }
+        // TODO use ActivityCompat.shouldShowRequestPermissionRationale
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
         // ping the service for check if it is running
         sendBroadcast(new Intent(LocationService.ACTION_PING));
 
-        // switch button to start
-        switchButtonStateToStart();
+        // switch view to ready to start mode
+        switchToReadyToGoMode();
     }
 
     @Override

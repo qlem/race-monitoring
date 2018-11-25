@@ -24,8 +24,9 @@ import java.util.List;
 
 public class LocationService extends Service {
 
-    LocationManager locationManager;
-    List<Location> locations;
+    private LocationManager locationManager;
+    private List<Location> locations;
+    private String CHANNEL_ID = "RMSChannel";
     public static final String ACTION_PING = LocationService.class.getName() + ".PING";
     public static final String ACTION_PONG = LocationService.class.getName() + ".PONG";
     public static final String ACTION_UPDATE = LocationService.class.getName() + ".UPDATE";
@@ -68,7 +69,7 @@ public class LocationService extends Service {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("test", name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
@@ -82,7 +83,7 @@ public class LocationService extends Service {
         createNotificationChannel();
 
         Notification notification =
-                new Notification.Builder(this, "test")
+                new Notification.Builder(this, CHANNEL_ID)
                         .setContentTitle(getText(R.string.notification_title))
                         .setContentText(getText(R.string.notification_text))
                         .setSmallIcon(R.drawable.ic_service)
@@ -115,14 +116,6 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        if (intent.getIntExtra("STOP", 0) == 1) {
-            Intent stopIntent = new Intent(ACTION_STOP);
-            stopIntent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-            sendBroadcast(stopIntent);
-            stopSelf();
-        }
-
         return START_NOT_STICKY;
     }
 
@@ -133,6 +126,11 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
+
+        Intent intent = new Intent(ACTION_STOP);
+        intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
+        sendBroadcast(intent);
+
         locationManager.removeUpdates(locationListener);
         unregisterReceiver(broadcastReceiver);
     }

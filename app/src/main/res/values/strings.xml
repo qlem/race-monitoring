@@ -33,8 +33,8 @@
     <string name="elevation_unit">m</string>
     
     <string name="notification_title">Race Monitoring Service</string>
-    <string name="notification_text">Recording GPS points</string>
-    <string name="notification_ticker">hello world</string>
-    <string name="channel_name">channel</string>
-    <string name="channel_description">my channel</string>
+    <string name="notification_text">Records GPS points of your race.</string>
+    <string name="notification_ticker">Race Monitoring Service</string>
+    <string name="channel_name">Main Channel</string>
+    <string name="channel_description">Main Channel used for Race Monitoring Service</string>
 </resources>
