@@ -84,11 +84,11 @@ public class LocationService extends Service {
 
         Notification notification =
                 new Notification.Builder(this, CHANNEL_ID)
-                        .setContentTitle(getText(R.string.notification_title))
-                        .setContentText(getText(R.string.notification_text))
+                        .setContentTitle(getString(R.string.notification_title))
+                        .setContentText(getString(R.string.notification_text))
                         .setSmallIcon(R.drawable.ic_service)
                         .setContentIntent(pendingIntent)
-                        .setTicker(getText(R.string.notification_ticker))
+                        .setTicker(getString(R.string.notification_ticker))
                         .build();
 
         startForeground(42, notification);
