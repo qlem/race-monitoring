@@ -23,11 +23,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // MonitoringState monitoringState;
     private final int REQUEST_PERMISSION_CODE = 1;
     List<Location> locations;
     Button mainButton;
     RecordingIndicatorView recordingIndicator;
+
+    // MonitoringState monitoringState;
 
     private void writeGPXFile() {
         if (ContextCompat.checkSelfPermission(this,
@@ -87,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
                 // stop the service
                 Intent intent = new Intent(MainActivity.this, LocationService.class);
-                stopService(intent);
+                intent.putExtra("STOP", 1);
+                startService(intent);
             }
         });
     }

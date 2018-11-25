@@ -51,6 +51,13 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
 
+        // start the service in foreground
+        startForeground();
+
+        // register the broadcast receiver
+        registerReceiver(broadcastReceiver, new IntentFilter(ACTION_PING));
+
+        // start recording location
         locations = new ArrayList<>();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
@@ -98,11 +105,12 @@ public class LocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        // start the service in foreground
-        startForeground();
-
-        // register the broadcast receiver
-        registerReceiver(broadcastReceiver, new IntentFilter(ACTION_PING));
+        if (intent.getIntExtra("STOP", 0) == 1) {
+            Intent stopIntent = new Intent(ACTION_STOP);
+            stopIntent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
+            sendBroadcast(stopIntent);
+            stopSelf();
+        }
 
         return START_NOT_STICKY;
     }
@@ -114,13 +122,7 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
-
         locationManager.removeUpdates(locationListener);
-
-        Intent intent = new Intent(ACTION_STOP);
-        intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-        sendBroadcast(intent);
-
         unregisterReceiver(broadcastReceiver);
     }
 }
