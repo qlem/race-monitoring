@@ -1,8 +1,10 @@
 package com.example.qlem.racemonitoring;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +18,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.qlem.racemonitoring.service.LocationService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,7 +93,12 @@ public class MainActivity extends AppCompatActivity {
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recordingLocation();
+                // recordingLocation();
+
+                switchButtonStateToStop();
+
+                Intent intent = new Intent(MainActivity.this, LocationService.class);
+                startService(intent);
             }
         });
     }
@@ -100,7 +109,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                locationManager.removeUpdates(locationListener);
+                Intent intent = new Intent(MainActivity.this, LocationService.class);
+                stopService(intent);
+
+                // locationManager.removeUpdates(locationListener);
                 monitoringState = MonitoringState.STOPPED;
                 recordingIndicator.stopRecording();
                 switchButtonStateToStart();
@@ -111,26 +123,50 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                writeGPXFile();
+                /* writeGPXFile();
 
                 Intent intent = new Intent(MainActivity.this, RaceReportActivity.class);
                 intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
                 startActivity(intent);
 
-                locations.clear();
+                locations.clear(); */
             }
         });
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action != null) {
+                if (action.equals(LocationService.ACTION_PONG)) {
+                    switchButtonStateToStop();
+                } else if (action.equals(LocationService.ACTION_STOP)) {
+                    locations = intent.getParcelableArrayListExtra("locations");
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkPermissions();
-
         recordingIndicator = findViewById(R.id.recording_indicator);
         mainButton = findViewById(R.id.main_button);
+
+        // check permissions
+        checkPermissions();
+
+        // init broadcast receiver
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(LocationService.ACTION_PONG);
+        intentFilter.addAction(LocationService.ACTION_STOP);
+        registerReceiver(broadcastReceiver, intentFilter);
+
+        // ping service for check if service is running
+        sendBroadcast(new Intent(LocationService.ACTION_PING));
 
         monitoringState = MonitoringState.STOPPED;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -170,5 +206,11 @@ public class MainActivity extends AppCompatActivity {
             locations = savedInstanceState.getParcelableArrayList("locations");
             recordingLocation();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
     }
 }
