@@ -16,7 +16,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +97,6 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
         // start the service in foreground
         startForeground();
