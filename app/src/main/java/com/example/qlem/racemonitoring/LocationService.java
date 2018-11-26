@@ -13,7 +13,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,18 +20,29 @@ import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocationService extends Service {
 
-    private LocationManager locationManager;
+    // private LocationManager locationManager;
+
+    FusedLocationProviderClient client;
+
     private List<Location> locations;
     public static final String ACTION_PING = LocationService.class.getName() + ".PING";
     public static final String ACTION_PONG = LocationService.class.getName() + ".PONG";
     public static final String ACTION_UPDATE = LocationService.class.getName() + ".UPDATE";
     public static final String ACTION_STOP = LocationService.class.getName() + ".STOP";
 
+    // deprecated
     LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -57,6 +67,23 @@ public class LocationService extends Service {
         }
     };
 
+    LocationCallback locationCallback = new LocationCallback() {
+        boolean isLocationAvailable = false;
+
+        @Override
+        public void onLocationAvailability (LocationAvailability locationAvailability) {
+            isLocationAvailable = locationAvailability.isLocationAvailable();
+        }
+
+        @Override
+        public void onLocationResult (LocationResult result) {
+            if (isLocationAvailable) {
+                sendBroadcast(new Intent(ACTION_UPDATE));
+                locations.add(result.getLastLocation());
+            }
+        }
+    };
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -76,8 +103,7 @@ public class LocationService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW);
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
@@ -105,13 +131,21 @@ public class LocationService extends Service {
 
         // start recording location
         locations = new ArrayList<>();
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        client = LocationServices.getFusedLocationProviderClient(this);
+
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000,
-                0, locationListener);
+        client.requestLocationUpdates(locationRequest, locationCallback, null);
+
+        // locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
     }
 
     @Override
@@ -131,7 +165,9 @@ public class LocationService extends Service {
         intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
         sendBroadcast(intent);
 
-        locationManager.removeUpdates(locationListener);
+        // locationManager.removeUpdates(locationListener);
+
+        client.removeLocationUpdates(locationCallback);
         unregisterReceiver(broadcastReceiver);
     }
 }

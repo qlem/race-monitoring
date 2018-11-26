@@ -33,7 +33,7 @@
     <string name="elevation_unit">m</string>
     
     <string name="notification_title">Race Monitoring Service</string>
-    <string name="notification_text">Records coordinates GPS of your race.</string>
+    <string name="notification_text">Records GPS coordinates of your race.</string>
     <string name="notification_ticker">Race Monitoring Service</string>
     <string name="channel_name">Default Channel</string>
     <string name="channel_description">Default Channel</string>
