@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -64,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
                 // start service
                 Intent intent = new Intent(MainActivity.this, LocationService.class);
-                startService(intent);
-
-                // TODO start service with startForegroundService(intent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent);
+                } else {
+                    startService(intent);
+                }
             }
         });
     }
