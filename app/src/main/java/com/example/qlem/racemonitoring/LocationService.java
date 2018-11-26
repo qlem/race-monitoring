@@ -68,19 +68,16 @@ public class LocationService extends Service {
     };
 
     LocationCallback locationCallback = new LocationCallback() {
-        boolean isLocationAvailable = false;
 
         @Override
         public void onLocationAvailability (LocationAvailability locationAvailability) {
-            isLocationAvailable = locationAvailability.isLocationAvailable();
+
         }
 
         @Override
         public void onLocationResult (LocationResult result) {
-            if (isLocationAvailable) {
-                sendBroadcast(new Intent(ACTION_UPDATE));
-                locations.add(result.getLastLocation());
-            }
+            sendBroadcast(new Intent(ACTION_UPDATE));
+            locations.add(result.getLastLocation());
         }
     };
 
