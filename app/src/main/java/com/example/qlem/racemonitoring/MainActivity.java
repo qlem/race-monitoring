@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 // start service
                 Intent intent = new Intent(MainActivity.this, LocationService.class);
                 startService(intent);
+
+                // TODO start service with startForegroundService(intent);
             }
         });
     }

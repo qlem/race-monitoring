@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -71,7 +72,10 @@ public class LocationService extends Service {
 
         @Override
         public void onLocationAvailability (LocationAvailability locationAvailability) {
-
+            if (!locationAvailability.isLocationAvailable()) {
+                Toast.makeText(LocationService.this, "Location not available",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
