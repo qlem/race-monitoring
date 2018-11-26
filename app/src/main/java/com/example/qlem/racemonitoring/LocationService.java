@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -118,6 +119,11 @@ public class LocationService extends Service {
                 .setTicker(getString(R.string.notification_ticker))
                 .build();
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
+            stopSelf();
+            return;
+        }
         startForeground(42, notification);
     }
 
