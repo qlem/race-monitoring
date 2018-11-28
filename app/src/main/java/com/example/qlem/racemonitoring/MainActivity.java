@@ -99,11 +99,11 @@ public class MainActivity extends AppCompatActivity {
                     locations = intent.getParcelableArrayListExtra("locations");
                     if (locations == null || locations.size() == 0) {
                         Toast.makeText(MainActivity.this,
-                                "No location data, nothing to display", Toast.LENGTH_SHORT).show();
+                                "Nothing to display", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    writeGPXFile();
+                    // writeGPXFile();
 
                     intent = new Intent(MainActivity.this, RaceReportActivity.class);
                     intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
@@ -144,11 +144,11 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(LocationService.ACTION_UPDATE);
         registerReceiver(broadcastReceiver, intentFilter);
 
-        // ping the service for check if it is running
-        sendBroadcast(new Intent(LocationService.ACTION_PING));
-
         // switch view to ready to start mode
         switchToReadyToGoMode();
+
+        // ping the service for check if it is running
+        sendBroadcast(new Intent(LocationService.ACTION_PING));
     }
 
     @Override
