@@ -121,12 +121,12 @@ public class RaceGraphView extends View {
         canvas.drawText(nf.format(maxSpeed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y, pen);
         canvas.drawText(nf.format(minSpeed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y + GRAPH_HEIGHT, pen);
 
-        // draw a horizontal line corresponding to the max value
+        // draw a horizontal line corresponding to the max value for altitude and speed
         pen.setStrokeWidth(2);
         pen.setColor(Color.BLACK);
         canvas.drawLine(GRAPH_START_X, GRAPH_START_Y, GRAPH_START_X + GRAPH_WIDTH, GRAPH_START_Y, pen);
 
-        // draws horizontals lines and corresponding altitudes and speeds values
+        // draw horizontal lines and their corresponding altitudes and speeds values
         float offset = GRAPH_HEIGHT / 5;
         for (float y = offset; y < GRAPH_HEIGHT; y += offset) {
 

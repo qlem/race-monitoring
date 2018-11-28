@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
+                    // TODO uncomment here
                     // writeGPXFile();
 
                     intent = new Intent(MainActivity.this, RaceReportActivity.class);
