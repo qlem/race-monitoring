@@ -13,37 +13,26 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocationService extends Service {
 
-    // private LocationManager locationManager;
-
-    FusedLocationProviderClient client;
-
+    private LocationManager locationManager;
     private List<Location> locations;
     public static final String ACTION_PING = LocationService.class.getName() + ".PING";
     public static final String ACTION_PONG = LocationService.class.getName() + ".PONG";
     public static final String ACTION_UPDATE = LocationService.class.getName() + ".UPDATE";
     public static final String ACTION_STOP = LocationService.class.getName() + ".STOP";
 
-    // deprecated
     LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -65,23 +54,6 @@ public class LocationService extends Service {
         @Override
         public void onProviderDisabled(String provider) {
 
-        }
-    };
-
-    LocationCallback locationCallback = new LocationCallback() {
-
-        @Override
-        public void onLocationAvailability (LocationAvailability locationAvailability) {
-            if (!locationAvailability.isLocationAvailable()) {
-                Toast.makeText(LocationService.this, "Location not available",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onLocationResult (LocationResult result) {
-            sendBroadcast(new Intent(ACTION_UPDATE));
-            locations.add(result.getLastLocation());
         }
     };
 
@@ -133,22 +105,13 @@ public class LocationService extends Service {
         // start recording location
         locations = new ArrayList<>();
 
-        client = LocationServices.getFusedLocationProviderClient(this);
-
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(4900);
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // TODO broadcast and stop the service
             return;
         }
-        client.requestLocationUpdates(locationRequest, locationCallback, null);
-
-        // locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
     }
 
     @Override
@@ -168,9 +131,7 @@ public class LocationService extends Service {
         intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
         sendBroadcast(intent);
 
-        // locationManager.removeUpdates(locationListener);
-
-        client.removeLocationUpdates(locationCallback);
+        locationManager.removeUpdates(locationListener);
         unregisterReceiver(broadcastReceiver);
     }
 }
