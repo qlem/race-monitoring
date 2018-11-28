@@ -33,8 +33,9 @@ public class RaceGraphView extends View {
     private Paint pen;
     private RectF background;
 
-    private int colorAltitude;
-    private int colorSpeed;
+    private int altitudeColor;
+    private int speedColor;
+    private int axesColor;
 
 
     public RaceGraphView(Context context) {
@@ -55,8 +56,9 @@ public class RaceGraphView extends View {
     private void init() {
         pen = new Paint(Paint.ANTI_ALIAS_FLAG);
         background = new RectF();
-        colorAltitude = Color.rgb(84, 108, 54);
-        colorSpeed = Color.rgb(221, 149, 48);
+        altitudeColor = Color.rgb(84, 108, 54);
+        speedColor = Color.rgb(221, 149, 48);
+        axesColor = Color.rgb(181, 59, 118);
     }
 
     public void setCollection(List<Location> locations) {
@@ -95,16 +97,18 @@ public class RaceGraphView extends View {
         pen.setFakeBoldText(true);
         float textY = (GRAPH_START_Y / 2) + (pen.getTextSize() * 1/3);
         pen.setTextAlign(Paint.Align.RIGHT);
-        pen.setColor(colorAltitude);
+        pen.setColor(altitudeColor);
         canvas.drawText("ALT", GRAPH_START_X, textY, pen);
 
         // init number format
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(1);
+        nf.setMinimumFractionDigits(1);
 
         // draw min and max value for altitude
         pen.setTextSize((float) (VIEW_WIDTH * 0.025));
         pen.setFakeBoldText(false);
+        pen.setColor(axesColor);
         canvas.drawText(nf.format(maxAltitude), GRAPH_START_X - 12, GRAPH_START_Y, pen);
         canvas.drawText(nf.format(minAltitude), GRAPH_START_X - 12, GRAPH_START_Y + GRAPH_HEIGHT, pen);
 
@@ -112,18 +116,18 @@ public class RaceGraphView extends View {
         pen.setTextSize((float) (GRAPH_START_Y * 0.4));
         pen.setFakeBoldText(true);
         pen.setTextAlign(Paint.Align.LEFT);
-        pen.setColor(colorSpeed);
+        pen.setColor(speedColor);
         canvas.drawText("SPE", GRAPH_START_X + GRAPH_WIDTH, textY, pen);
 
         // draw min and max value for speed
         pen.setTextSize((float) (VIEW_WIDTH * 0.025));
         pen.setFakeBoldText(false);
+        pen.setColor(axesColor);
         canvas.drawText(nf.format(maxSpeed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y, pen);
         canvas.drawText(nf.format(minSpeed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y + GRAPH_HEIGHT, pen);
 
         // draw a horizontal line corresponding to the max value for altitude and speed
         pen.setStrokeWidth(2);
-        pen.setColor(Color.BLACK);
         canvas.drawLine(GRAPH_START_X, GRAPH_START_Y, GRAPH_START_X + GRAPH_WIDTH, GRAPH_START_Y, pen);
 
         // draw horizontal lines and their corresponding altitudes and speeds values
@@ -131,19 +135,16 @@ public class RaceGraphView extends View {
         for (float y = offset; y < GRAPH_HEIGHT; y += offset) {
 
             // draw a horizontal line
-            pen.setColor(Color.BLACK);
             canvas.drawLine(GRAPH_START_X, GRAPH_START_Y + y, GRAPH_START_X + GRAPH_WIDTH, GRAPH_START_Y + y, pen);
 
             // draw corresponding altitude values
             float altitude = diffAltitude * (y - GRAPH_HEIGHT) / - GRAPH_HEIGHT + minAltitude;
             pen.setTextAlign(Paint.Align.RIGHT);
-            pen.setColor(colorAltitude);
             canvas.drawText(nf.format(altitude), GRAPH_START_X - 12, GRAPH_START_Y + y, pen);
 
             // draw corresponding speed values
             float speed = diffSpeed * (y - GRAPH_HEIGHT) / - GRAPH_HEIGHT + minSpeed;
             pen.setTextAlign(Paint.Align.LEFT);
-            pen.setColor(colorSpeed);
             canvas.drawText(nf.format(speed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y + y, pen);
         }
     }
@@ -164,26 +165,23 @@ public class RaceGraphView extends View {
 
         int nbPoints = locations.size();
         pen.setStrokeWidth(5);
-        for (int i = 0; i < nbPoints; i++) {
-            if (i < nbPoints - 1) {
+        for (int i = 0; i < nbPoints - 1; i++) {
+            startX = i * GRAPH_WIDTH / (nbPoints - 1) + GRAPH_START_X;
+            stopX = (i + 1) * GRAPH_WIDTH / (nbPoints - 1) + GRAPH_START_X;
 
-                startX = i * GRAPH_WIDTH / (nbPoints - 1) + GRAPH_START_X;
-                stopX = (i + 1) * GRAPH_WIDTH / (nbPoints - 1) + GRAPH_START_X;
+            currentAltitude = (float) locations.get(i).getAltitude();
+            nextAltitude = (float) locations.get(i + 1).getAltitude();
+            startYAlt = (currentAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
+            stopYAlt = (nextAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
+            pen.setColor(altitudeColor);
+            canvas.drawLine(startX, startYAlt, stopX, stopYAlt, pen);
 
-                currentAltitude = (float) locations.get(i).getAltitude();
-                nextAltitude = (float) locations.get(i + 1).getAltitude();
-                startYAlt = (currentAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
-                stopYAlt = (nextAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
-                pen.setColor(colorAltitude);
-                canvas.drawLine(startX, startYAlt, stopX, stopYAlt, pen);
-
-                currentSpeed = locations.get(i).getAccuracy();
-                nextSpeed = locations.get(i + 1).getAccuracy();
-                startYSpeed = (currentSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
-                stopYSpeed = (nextSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
-                pen.setColor(colorSpeed);
-                canvas.drawLine(startX, startYSpeed, stopX, stopYSpeed, pen);
-            }
+            currentSpeed = locations.get(i).getAccuracy();
+            nextSpeed = locations.get(i + 1).getAccuracy();
+            startYSpeed = (currentSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
+            stopYSpeed = (nextSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
+            pen.setColor(speedColor);
+            canvas.drawLine(startX, startYSpeed, stopX, stopYSpeed, pen);
         }
     }
 
@@ -194,9 +192,10 @@ public class RaceGraphView extends View {
             return;
         }
 
+        // TODO remove background (test)
         pen.setColor(Color.rgb(210, 210, 210));
         background.set(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
-        canvas.drawRect(background, pen);
+        // canvas.drawRect(background, pen);
 
         float left = GRAPH_START_X;
         float top = GRAPH_START_Y;
@@ -204,7 +203,7 @@ public class RaceGraphView extends View {
         float bottom = GRAPH_START_Y + GRAPH_HEIGHT;
 
         pen.setStrokeWidth(6);
-        pen.setColor(Color.rgb(181, 59, 118));
+        pen.setColor(axesColor);
         canvas.drawLine(left - 3, top - 10, left - 3, bottom + 6, pen);
         canvas.drawLine(left - 6, bottom + 3, right + 6, bottom + 3, pen);
         canvas.drawLine(right + 3, bottom + 6, right + 3, top - 10, pen);
