@@ -103,8 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // TODO uncomment here
-                    // writeGPXFile();
+                    writeGPXFile();
 
                     intent = new Intent(MainActivity.this, RaceReportActivity.class);
                     intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);

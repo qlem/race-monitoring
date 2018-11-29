@@ -107,7 +107,6 @@ public class LocationService extends Service {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // TODO broadcast and stop the service
             return;
         }
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
