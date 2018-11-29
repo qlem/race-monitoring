@@ -3,15 +3,27 @@ package com.example.qlem.racemonitoring;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.example.qlem.racemonitoring.graph.Altitude;
+import com.example.qlem.racemonitoring.graph.RaceGraphView;
+import com.example.qlem.racemonitoring.graph.Speed;
+
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RaceReportActivity extends AppCompatActivity {
 
-    List<Location> locations;
+    private List<Location> locations;
+    private List<Altitude> altitudes;
+    private List<Speed> speeds;
+    private float altMax;
+    private float altMin;
+    private float speedMax;
+    private float speedMin;
 
     private void displayTimeRace() {
         TextView timeView = findViewById(R.id.time_value);
@@ -55,54 +67,65 @@ public class RaceReportActivity extends AppCompatActivity {
         TextView altGainView = findViewById(R.id.elevation_gain_value);
         TextView altLossView = findViewById(R.id.elevation_loss_value);
 
+        // init vars
         float distance = 0;
-
-        float speedMax = 0;
-        float speedMin = 0;
+        speedMax = 0;
+        speedMin = 0;
         float speedTotal = 0;
-
-        double altMax = 0;
-        double altMin = 0;
-        double altGain = 0;
-        double altLoss = 0;
+        altMax = 0;
+        altMin = 0;
+        float altGain = 0;
+        float altLoss = 0;
 
         // loop
         for (int i = 0; i < locations.size(); i++) {
 
-            // init
+            // init current location
             Location current = locations.get(i);
-            float speed = current.getAccuracy();
-            double altitude = current.getAltitude();
-            if (i == 0) {
-                speedMin = speed;
-                speedMax = speed;
-                altMax = altitude;
-                altMin = altitude;
+
+            // distance
+            if (i < locations.size() - 1) {
+                distance += current.distanceTo(locations.get(i + 1));
             }
 
             // speed
-            if (speed > speedMax) {
-                speedMax = speed;
-            } else if (speed < speedMin) {
-                speedMin = speed;
+            if (i < locations.size() - 1) {
+                float time = (locations.get(i + 1).getTime() - current.getTime()) / 1000;
+                float dist = current.distanceTo(locations.get(i + 1));
+                Speed speed = new Speed(dist / time);
+                if (i == 0) {
+                    speedMin = speed.speed;
+                    speedMax = speed.speed;
+                }
+                if (speed.speed > speedMax) {
+                    speedMax = speed.speed;
+                } else if (speed.speed < speedMin) {
+                    speedMin = speed.speed;
+                }
+                speedTotal += speed.speed;
+                speeds.add(speed);
             }
-            speedTotal += speed;
 
-            // altitude + distance
-            if (altitude > altMax) {
-                altMax = altitude;
-            } else if (altitude < altMin) {
-                altMin = altitude;
+            // altitude
+            Altitude altitude = new Altitude((float) current.getAltitude());
+            if (i == 0) {
+                altMax = altitude.altitude;
+                altMin = altitude.altitude;
+            }
+            if (altitude.altitude > altMax) {
+                altMax = altitude.altitude;
+            } else if (altitude.altitude < altMin) {
+                altMin = altitude.altitude;
             }
             if (i < locations.size() - 1) {
-                distance += current.distanceTo(locations.get(i + 1));
                 double nextAltitude = locations.get(i + 1).getAltitude();
-                if (nextAltitude > altitude) {
-                    altGain += (nextAltitude - altitude);
-                } else if (nextAltitude < altitude) {
-                    altLoss += (nextAltitude - altitude);
+                if (nextAltitude > altitude.altitude) {
+                    altGain += (nextAltitude - altitude.altitude);
+                } else if (nextAltitude < altitude.altitude) {
+                    altLoss += (nextAltitude - altitude.altitude);
                 }
             }
+            altitudes.add(altitude);
         }
 
         NumberFormat nf = NumberFormat.getInstance();
@@ -119,7 +142,8 @@ public class RaceReportActivity extends AppCompatActivity {
         }
 
         // set textView speed
-        float avg = speedTotal / locations.size();
+        float avg = speedTotal / speeds.size();
+        speeds.add(0, new Speed(avg));
         nf.setMaximumFractionDigits(1);
         speedMaxView.setText(nf.format(speedMax));
         speedMinView.setText(nf.format(speedMin));
@@ -141,10 +165,20 @@ public class RaceReportActivity extends AppCompatActivity {
         Intent intent = getIntent();
         locations = intent.getParcelableArrayListExtra("locations");
 
-        RaceGraphView raceGraph = findViewById(R.id.race_graph);
-        raceGraph.setCollection(locations);
+        altitudes = new ArrayList<>();
+        speeds = new ArrayList<>();
 
         displayTimeRace();
         displayRaceOverview();
+
+        RaceGraphView raceGraph = findViewById(R.id.race_graph);
+        Bundle collection = new Bundle();
+        collection.putParcelableArrayList("speeds", (ArrayList<? extends Parcelable>) speeds);
+        collection.putParcelableArrayList("altitudes", (ArrayList<? extends Parcelable>) altitudes);
+        collection.putFloat("altMax", altMax);
+        collection.putFloat("altMin", altMin);
+        collection.putFloat("speedMax", speedMax);
+        collection.putFloat("speedMin", speedMin);
+        raceGraph.setCollection(collection);
     }
 }

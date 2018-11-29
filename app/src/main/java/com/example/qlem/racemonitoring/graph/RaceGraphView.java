@@ -1,11 +1,11 @@
-package com.example.qlem.racemonitoring;
+package com.example.qlem.racemonitoring.graph;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.location.Location;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -14,7 +14,8 @@ import java.util.List;
 
 public class RaceGraphView extends View {
 
-    private List<Location> locations;
+    private List<Altitude> altitudes;
+    private List<Speed> speeds;
 
     private int VIEW_WIDTH;
     private int VIEW_HEIGHT;
@@ -61,30 +62,13 @@ public class RaceGraphView extends View {
         axesColor = Color.rgb(181, 59, 118);
     }
 
-    public void setCollection(List<Location> locations) {
-        this.locations = locations;
-        float currentAltitude;
-        float currentSpeed;
-        for (int i = 0; i < locations.size(); i++) {
-            currentAltitude = (float) locations.get(i).getAltitude();
-            currentSpeed = locations.get(i).getAccuracy();
-            if (i == 0) {
-                maxAltitude = currentAltitude;
-                minAltitude = currentAltitude;
-                maxSpeed = currentSpeed;
-                minSpeed = currentSpeed;
-            }
-            if (currentAltitude > maxAltitude) {
-                maxAltitude = currentAltitude;
-            } else if (currentAltitude < minAltitude) {
-                minAltitude = currentAltitude;
-            }
-            if (currentSpeed > maxSpeed) {
-                maxSpeed = currentSpeed;
-            } else if  (currentSpeed < minSpeed) {
-                minSpeed = currentSpeed;
-            }
-        }
+    public void setCollection(Bundle collection) {
+        altitudes = collection.getParcelableArrayList("altitudes");
+        speeds = collection.getParcelableArrayList("speeds");
+        maxAltitude = collection.getFloat("altMax");
+        minAltitude = collection.getFloat("altMin");
+        maxSpeed = collection.getFloat("speedMax");
+        minSpeed = collection.getFloat("speedMin");
         diffAltitude = maxAltitude - minAltitude;
         diffSpeed = maxSpeed - minSpeed;
         invalidate();
@@ -150,45 +134,43 @@ public class RaceGraphView extends View {
     }
 
     private void drawCurves(Canvas canvas) {
+
         float startX;
         float stopX;
-
-        float startYAlt;
-        float stopYAlt;
+        float startY;
+        float stopY;
         float currentAltitude;
         float nextAltitude;
-
-        float startYSpeed;
-        float stopYSpeed;
         float currentSpeed;
         float nextSpeed;
 
-        int nbPoints = locations.size();
         pen.setStrokeWidth(5);
-        for (int i = 0; i < nbPoints - 1; i++) {
-            startX = i * GRAPH_WIDTH / (nbPoints - 1) + GRAPH_START_X;
-            stopX = (i + 1) * GRAPH_WIDTH / (nbPoints - 1) + GRAPH_START_X;
 
-            currentAltitude = (float) locations.get(i).getAltitude();
-            nextAltitude = (float) locations.get(i + 1).getAltitude();
-            startYAlt = (currentAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
-            stopYAlt = (nextAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
+        int sizeList = altitudes.size();
+        for (int i = 0; i < sizeList - 1; i++) {
+            startX = i * GRAPH_WIDTH / (sizeList - 1) + GRAPH_START_X;
+            stopX = (i + 1) * GRAPH_WIDTH / (sizeList - 1) + GRAPH_START_X;
+
+            currentAltitude = altitudes.get(i).altitude;
+            nextAltitude = altitudes.get(i + 1).altitude;
+            startY = (currentAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
+            stopY = (nextAltitude - minAltitude) * -GRAPH_HEIGHT / diffAltitude + GRAPH_HEIGHT + GRAPH_START_Y;
             pen.setColor(altitudeColor);
-            canvas.drawLine(startX, startYAlt, stopX, stopYAlt, pen);
+            canvas.drawLine(startX, startY, stopX, stopY, pen);
 
-            currentSpeed = locations.get(i).getAccuracy();
-            nextSpeed = locations.get(i + 1).getAccuracy();
-            startYSpeed = (currentSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
-            stopYSpeed = (nextSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
+            currentSpeed = speeds.get(i).speed;
+            nextSpeed = speeds.get(i + 1).speed;
+            startY = (currentSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
+            stopY = (nextSpeed - minSpeed) * -GRAPH_HEIGHT / diffSpeed + GRAPH_HEIGHT + GRAPH_START_Y;
             pen.setColor(speedColor);
-            canvas.drawLine(startX, startYSpeed, stopX, stopYSpeed, pen);
+            canvas.drawLine(startX, startY, stopX, stopY, pen);
         }
     }
 
     @Override
     protected void onDraw (Canvas canvas) {
 
-        if (locations == null) {
+        if (altitudes == null || speeds == null) {
             return;
         }
 

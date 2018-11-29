@@ -289,7 +289,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline1"
         app:layout_constraintTop_toTopOf="@+id/barrier2" />
 
-    <com.example.qlem.racemonitoring.RaceGraphView
+    <com.example.qlem.racemonitoring.graph.RaceGraphView
         android:id="@+id/race_graph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

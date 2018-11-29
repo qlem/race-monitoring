@@ -297,7 +297,7 @@
         app:constraint_referenced_ids="elevation_max_label,elevation_max_value,elevation_min_label,elevation_min_value,elevation_gain_label,elevation_gain_value,elevation_loss_label,elevation_loss_value"
         tools:layout_editor_absoluteY="511dp" />
 
-    <com.example.qlem.racemonitoring.RaceGraphView
+    <com.example.qlem.racemonitoring.graph.RaceGraphView
         android:id="@+id/race_graph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
