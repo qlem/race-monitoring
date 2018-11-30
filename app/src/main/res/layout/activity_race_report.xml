@@ -44,6 +44,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/distance_label"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,6 +58,7 @@
         android:text="@string/distance_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/distance_label" />
 
@@ -69,6 +71,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/time_label"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -82,6 +85,7 @@
         android:text="@string/time_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/time_label" />
 
@@ -94,6 +98,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/speed_label"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spacer_1" />
 
@@ -117,6 +122,7 @@
         android:text="@string/speed_max_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/speed_max_label"
         app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
 
@@ -140,6 +146,7 @@
         android:text="@string/speed_min_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/speed_min_label"
         app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
 
@@ -163,6 +170,7 @@
         android:text="@string/speed_avg_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/speed_avg_label"
         app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
 
@@ -175,6 +183,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/speed_unit"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/speed_label"
         app:layout_constraintTop_toBottomOf="@+id/spacer_1" />
 
@@ -187,6 +196,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/elevation_label"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spacer_2" />
 
@@ -210,6 +220,7 @@
         android:text="@string/elevation_max_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/elevation_max_label"
         app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
 
@@ -217,8 +228,8 @@
         android:id="@+id/elevation_min_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/elevation_min_label"
         app:layout_constraintBaseline_toBaselineOf="@+id/elevation_min_value"
         app:layout_constraintStart_toEndOf="@+id/elevation_max_value" />
@@ -233,6 +244,7 @@
         android:text="@string/elevation_min_value"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/elevation_min_label"
         app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
 
@@ -240,11 +252,11 @@
         android:id="@+id/elevation_gain_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/elevation_gain_label"
         app:layout_constraintBaseline_toBaselineOf="@+id/elevation_gain_value"
-        app:layout_constraintStart_toEndOf="@+id/elevation_min_value" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/elevation_gain_value"
@@ -254,19 +266,20 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/elevation_gain_value"
+        android:textColor="@color/mainColor"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_gain_label"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintTop_toBottomOf="@+id/elevation_max_value" />
 
     <TextView
         android:id="@+id/elevation_loss_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/elevation_loss_label"
-        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_loss_value"
+        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_gain_value"
         app:layout_constraintStart_toEndOf="@+id/elevation_gain_value" />
 
     <TextView
@@ -275,12 +288,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:text="@string/elevation_loss_value"
+        android:textColor="@color/mainColor"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/elevation_loss_label"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_loss_label"
+        app:layout_constraintStart_toEndOf="@+id/elevation_loss_label" />
 
     <TextView
         android:id="@+id/elevation_unit"
@@ -291,6 +304,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/elevation_unit"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_label"
         app:layout_constraintTop_toBottomOf="@+id/spacer_2" />
 

@@ -133,14 +133,17 @@ public class RaceReportActivity extends AppCompatActivity {
         if (distance >= 1000) {
             distance = distance / 1000;
             nf.setMaximumFractionDigits(2);
-            distanceValueView.setText(String.format("%s km", nf.format(distance)));
+            distanceValueView.setText(String.format("%skm", nf.format(distance)));
         } else {
             nf.setMaximumFractionDigits(0);
-            distanceValueView.setText(String.format("%s m", nf.format(distance)));
+            distanceValueView.setText(String.format("%sm", nf.format(distance)));
         }
 
         // set textView speed
-        float avg = speedTotal / speeds.size();
+        float avg = 0;
+        if (speeds.size() != 0 && speedTotal != 0) {
+            avg = speedTotal / speeds.size();
+        }
         speeds.add(0, new Speed(avg));
         nf.setMaximumFractionDigits(1);
         speedMaxView.setText(nf.format(speedMax));

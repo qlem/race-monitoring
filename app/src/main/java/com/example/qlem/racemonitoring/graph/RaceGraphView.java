@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.example.qlem.racemonitoring.R;
+
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -31,8 +33,8 @@ public class RaceGraphView extends View {
 
     private Paint pen;
 
-    private int altitudeColor;
     private int speedColor;
+    private int altitudeColor;
     private int axesColor;
 
 
@@ -53,9 +55,9 @@ public class RaceGraphView extends View {
 
     private void init() {
         pen = new Paint(Paint.ANTI_ALIAS_FLAG);
-        altitudeColor = Color.rgb(84, 108, 54);
-        speedColor = Color.rgb(221, 149, 48);
-        axesColor = Color.rgb(181, 59, 118);
+        altitudeColor = Color.rgb(44, 214, 32);
+        speedColor = getResources().getColor(R.color.mainColor);
+        axesColor = Color.rgb(216, 216, 216);
     }
 
     public void setCollection(Bundle collection) {
@@ -72,6 +74,11 @@ public class RaceGraphView extends View {
 
     private void drawLabels(Canvas canvas) {
 
+        // init number format
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(1);
+        nf.setMinimumFractionDigits(1);
+
         // draw altitude label
         pen.setTextSize((float) (GRAPH_START_Y * 0.4));
         pen.setFakeBoldText(true);
@@ -80,16 +87,10 @@ public class RaceGraphView extends View {
         pen.setColor(altitudeColor);
         canvas.drawText("ALT m", 0, textY, pen);
 
-        // init number format
-        pen.setTextAlign(Paint.Align.RIGHT);
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(1);
-        nf.setMinimumFractionDigits(1);
-
         // draw min and max value for altitude
+        pen.setTextAlign(Paint.Align.RIGHT);
         pen.setTextSize((float) (VIEW_WIDTH * 0.025));
         pen.setFakeBoldText(false);
-        pen.setColor(axesColor);
         canvas.drawText(nf.format(maxAltitude), GRAPH_START_X - 12, GRAPH_START_Y, pen);
         canvas.drawText(nf.format(minAltitude), GRAPH_START_X - 12, GRAPH_START_Y + GRAPH_HEIGHT, pen);
 
@@ -104,12 +105,12 @@ public class RaceGraphView extends View {
         pen.setTextAlign(Paint.Align.LEFT);
         pen.setTextSize((float) (VIEW_WIDTH * 0.025));
         pen.setFakeBoldText(false);
-        pen.setColor(axesColor);
         canvas.drawText(nf.format(maxSpeed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y, pen);
         canvas.drawText(nf.format(minSpeed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y + GRAPH_HEIGHT, pen);
 
         // draw a horizontal line corresponding to the max value for altitude and speed
         pen.setStrokeWidth(2);
+        pen.setColor(axesColor);
         canvas.drawLine(GRAPH_START_X, GRAPH_START_Y, GRAPH_START_X + GRAPH_WIDTH, GRAPH_START_Y, pen);
 
         // draw horizontal lines and their corresponding altitudes and speeds values
@@ -117,16 +118,19 @@ public class RaceGraphView extends View {
         for (float y = offset; y < GRAPH_HEIGHT; y += offset) {
 
             // draw a horizontal line
+            pen.setColor(axesColor);
             canvas.drawLine(GRAPH_START_X, GRAPH_START_Y + y, GRAPH_START_X + GRAPH_WIDTH, GRAPH_START_Y + y, pen);
 
             // draw corresponding altitude values
             float altitude = diffAltitude * (y - GRAPH_HEIGHT) / - GRAPH_HEIGHT + minAltitude;
             pen.setTextAlign(Paint.Align.RIGHT);
+            pen.setColor(altitudeColor);
             canvas.drawText(nf.format(altitude), GRAPH_START_X - 12, GRAPH_START_Y + y, pen);
 
             // draw corresponding speed values
             float speed = diffSpeed * (y - GRAPH_HEIGHT) / - GRAPH_HEIGHT + minSpeed;
             pen.setTextAlign(Paint.Align.LEFT);
+            pen.setColor(speedColor);
             canvas.drawText(nf.format(speed), GRAPH_START_X + GRAPH_WIDTH + 12, GRAPH_START_Y + y, pen);
         }
     }
