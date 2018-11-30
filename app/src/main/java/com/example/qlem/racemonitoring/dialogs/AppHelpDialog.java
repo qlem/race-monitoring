@@ -15,6 +15,7 @@ public class AppHelpDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.app_help_title);
         builder.setMessage(R.string.app_help_message)
                 .setPositiveButton(R.string.app_help_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

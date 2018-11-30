@@ -38,11 +38,14 @@
     <string name="channel_name">Default Channel</string>
     <string name="channel_description">Default Channel</string>
 
+    <string name="action_help">Help</string>
+
+    <string name="location_dialog_title">Enable location</string>
     <string name="location_dialog_message">You must enable device location for race recording.</string>
     <string name="location_dialog_enable">ENABLE</string>
     <string name="location_dialog_quit">QUIT</string>
 
-    <string name="action_help">Help</string>
+    <string name="app_help_title">Help</string>
     <string name="app_help_message">Press the button for start or stop recording. Ensure that you have enabled the device location.</string>
     <string name="app_help_ok">OK</string>
 </resources>

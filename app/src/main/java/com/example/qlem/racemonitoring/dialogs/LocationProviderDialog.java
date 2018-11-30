@@ -23,6 +23,7 @@ public class LocationProviderDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.location_dialog_title);
         builder.setMessage(R.string.location_dialog_message)
                 .setPositiveButton(R.string.location_dialog_enable, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -42,6 +43,4 @@ public class LocationProviderDialog extends DialogFragment {
         super.onAttach(context);
         mListener = (NoticeDialogListener) context;
     }
-
-
 }
