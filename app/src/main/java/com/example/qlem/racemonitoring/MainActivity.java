@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,12 +25,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogLocationProvider.NoticeDialogListener {
 
     private final int REQUEST_PERMISSION_CODE = 1;
     List<Location> locations;
     Button mainButton;
     RecordingIndicatorView recordingIndicator;
+    DialogLocationProvider dialog;
+    LocationManager locationManager;
 
     private void switchToRecordingMode() {
         mainButton.setText(R.string.btn_stop);
@@ -40,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 switchToReadyToGoMode();
 
                 // stop the service
-                Intent intent = new Intent(MainActivity.this, LocationService.class);
-                stopService(intent);
+                stopService(new Intent(MainActivity.this, LocationService.class));
             }
         });
     }
@@ -115,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    void checkDeviceLocation() {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            dialog.show(getSupportFragmentManager(), "location_dialog");
+        }
+    }
+
     private void askPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED ||
@@ -134,8 +144,15 @@ public class MainActivity extends AppCompatActivity {
         recordingIndicator = findViewById(R.id.recording_indicator);
         mainButton = findViewById(R.id.main_button);
 
+        // init dialog location provider
+        dialog = new DialogLocationProvider();
+
         // ask permissions
         askPermissions();
+
+        // check location
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        checkDeviceLocation();
 
         // init broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
@@ -171,5 +188,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         unregisterReceiver(broadcastReceiver);
         super.onDestroy();
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        finish();
     }
 }

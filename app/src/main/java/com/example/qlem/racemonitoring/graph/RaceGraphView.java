@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
@@ -18,7 +17,6 @@ public class RaceGraphView extends View {
     private List<Speed> speeds;
 
     private int VIEW_WIDTH;
-    private int VIEW_HEIGHT;
     private float GRAPH_WIDTH;
     private float GRAPH_HEIGHT;
     private float GRAPH_START_X;
@@ -32,7 +30,6 @@ public class RaceGraphView extends View {
     private float diffSpeed;
 
     private Paint pen;
-    private RectF background;
 
     private int altitudeColor;
     private int speedColor;
@@ -56,7 +53,6 @@ public class RaceGraphView extends View {
 
     private void init() {
         pen = new Paint(Paint.ANTI_ALIAS_FLAG);
-        background = new RectF();
         altitudeColor = Color.rgb(84, 108, 54);
         speedColor = Color.rgb(221, 149, 48);
         axesColor = Color.rgb(181, 59, 118);
@@ -80,11 +76,12 @@ public class RaceGraphView extends View {
         pen.setTextSize((float) (GRAPH_START_Y * 0.4));
         pen.setFakeBoldText(true);
         float textY = (GRAPH_START_Y / 2) + (pen.getTextSize() * 1/3);
-        pen.setTextAlign(Paint.Align.RIGHT);
+        pen.setTextAlign(Paint.Align.LEFT);
         pen.setColor(altitudeColor);
-        canvas.drawText("ALT", GRAPH_START_X, textY, pen);
+        canvas.drawText("ALT m", 0, textY, pen);
 
         // init number format
+        pen.setTextAlign(Paint.Align.RIGHT);
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(1);
         nf.setMinimumFractionDigits(1);
@@ -99,11 +96,12 @@ public class RaceGraphView extends View {
         // draw speed label
         pen.setTextSize((float) (GRAPH_START_Y * 0.4));
         pen.setFakeBoldText(true);
-        pen.setTextAlign(Paint.Align.LEFT);
+        pen.setTextAlign(Paint.Align.RIGHT);
         pen.setColor(speedColor);
-        canvas.drawText("SPE", GRAPH_START_X + GRAPH_WIDTH, textY, pen);
+        canvas.drawText("m/s SPE", VIEW_WIDTH, textY, pen);
 
         // draw min and max value for speed
+        pen.setTextAlign(Paint.Align.LEFT);
         pen.setTextSize((float) (VIEW_WIDTH * 0.025));
         pen.setFakeBoldText(false);
         pen.setColor(axesColor);
@@ -174,11 +172,6 @@ public class RaceGraphView extends View {
             return;
         }
 
-        // TODO remove background (test)
-        pen.setColor(Color.rgb(210, 210, 210));
-        background.set(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
-        // canvas.drawRect(background, pen);
-
         float left = GRAPH_START_X;
         float top = GRAPH_START_Y;
         float right = GRAPH_START_X + GRAPH_WIDTH;
@@ -198,17 +191,18 @@ public class RaceGraphView extends View {
     protected void onMeasure (int widthMeasureSpec, int heightMeasureSpec) {
         int widthScreen = MeasureSpec.getSize(widthMeasureSpec);
         int heightScreen = MeasureSpec.getSize(heightMeasureSpec);
+        int viewHeight;
         if (widthScreen < heightScreen) {
             VIEW_WIDTH = (int) (widthScreen * 0.95);
-            VIEW_HEIGHT = (int) (heightScreen * 0.35);
+            viewHeight = (int) (heightScreen * 0.35);
         } else {
             VIEW_WIDTH = (int) (widthScreen * 0.45);
-            VIEW_HEIGHT = (int) (heightScreen * 0.5);
+            viewHeight = (int) (heightScreen * 0.5);
         }
         GRAPH_WIDTH = (float) (VIEW_WIDTH * 0.80);
-        GRAPH_HEIGHT = (float) (VIEW_HEIGHT * 0.75);
+        GRAPH_HEIGHT = (float) (viewHeight * 0.75);
         GRAPH_START_X = (VIEW_WIDTH - GRAPH_WIDTH) / 2;
-        GRAPH_START_Y = (float) ((VIEW_HEIGHT - GRAPH_HEIGHT) * 0.7);
-        setMeasuredDimension(VIEW_WIDTH, VIEW_HEIGHT);
+        GRAPH_START_Y = (float) ((viewHeight - GRAPH_HEIGHT) * 0.7);
+        setMeasuredDimension(VIEW_WIDTH, viewHeight);
     }
 }
