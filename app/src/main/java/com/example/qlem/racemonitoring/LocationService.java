@@ -14,14 +14,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,14 +43,7 @@ public class LocationService extends Service {
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            switch (status) {
-                case LocationProvider.OUT_OF_SERVICE:
-                    Toast.makeText(LocationService.this, "Out of service", Toast.LENGTH_SHORT).show();
-                    break;
-                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    Toast.makeText(LocationService.this, "Temporarily unavailable", Toast.LENGTH_SHORT).show();
-                    break;
-            }
+
         }
 
         @Override

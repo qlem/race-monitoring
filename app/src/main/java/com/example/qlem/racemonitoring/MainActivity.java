@@ -63,6 +63,12 @@ public class MainActivity extends AppCompatActivity implements DialogLocationPro
                     return;
                 }
 
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    Toast.makeText(MainActivity.this, "Device location disabled",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // switch button to stop
                 recordingIndicator.startRecording();
                 switchToRecordingMode();
