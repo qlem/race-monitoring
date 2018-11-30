@@ -42,7 +42,7 @@
 
     <string name="location_dialog_title">Enable location</string>
     <string name="location_dialog_message">You must enable device location for race recording.</string>
-    <string name="location_dialog_enable">ENABLE</string>
+    <string name="location_dialog_enable">OPEN SETTINGS</string>
     <string name="location_dialog_quit">QUIT</string>
 
     <string name="app_help_title">Help</string>

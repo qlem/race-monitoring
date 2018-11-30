@@ -204,11 +204,6 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        finish();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);

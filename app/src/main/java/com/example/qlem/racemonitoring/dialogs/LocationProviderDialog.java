@@ -16,7 +16,6 @@ public class LocationProviderDialog extends DialogFragment {
 
     public interface NoticeDialogListener {
         void onDialogPositiveClick(DialogFragment dialog);
-        void onDialogNegativeClick(DialogFragment dialog);
     }
 
     @NonNull
@@ -28,11 +27,6 @@ public class LocationProviderDialog extends DialogFragment {
                 .setPositiveButton(R.string.location_dialog_enable, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onDialogPositiveClick(LocationProviderDialog.this);
-                    }
-                })
-                .setNegativeButton(R.string.location_dialog_quit, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNegativeClick(LocationProviderDialog.this);
                     }
                 });
         return builder.create();

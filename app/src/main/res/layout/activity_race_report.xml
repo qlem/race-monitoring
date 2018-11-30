@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -79,9 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="distance_value,distance_unit,time_value"
-        tools:layout_editor_absoluteX="384dp"
-        tools:layout_editor_absoluteY="511dp" />
+        app:constraint_referenced_ids="distance_value,distance_unit,time_value" />
 
     <TextView
         android:id="@+id/speed_label"
@@ -176,8 +173,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="speed_max_label,speed_max_value,speed_min_label,speed_min_value,speed_avg_label,speed_avg_value"
-        tools:layout_editor_absoluteY="511dp" />
+        app:constraint_referenced_ids="speed_max_label,speed_max_value,speed_min_label,speed_min_value,speed_avg_label,speed_avg_value"/>
 
     <TextView
         android:id="@+id/elevation_label"
@@ -294,8 +290,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="elevation_max_label,elevation_max_value,elevation_min_label,elevation_min_value,elevation_gain_label,elevation_gain_value,elevation_loss_label,elevation_loss_value"
-        tools:layout_editor_absoluteY="511dp" />
+        app:constraint_referenced_ids="elevation_max_label,elevation_max_value,elevation_min_label,elevation_min_value,elevation_gain_label,elevation_gain_value,elevation_loss_label,elevation_loss_value" />
 
     <com.example.qlem.racemonitoring.graph.RaceGraphView
         android:id="@+id/race_graph"
