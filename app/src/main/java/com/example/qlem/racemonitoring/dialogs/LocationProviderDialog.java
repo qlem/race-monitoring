@@ -1,4 +1,4 @@
-package com.example.qlem.racemonitoring;
+package com.example.qlem.racemonitoring.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
-public class DialogLocationProvider extends DialogFragment {
+import com.example.qlem.racemonitoring.R;
+
+public class LocationProviderDialog extends DialogFragment {
 
     private NoticeDialogListener mListener;
 
@@ -24,12 +26,12 @@ public class DialogLocationProvider extends DialogFragment {
         builder.setMessage(R.string.location_dialog_message)
                 .setPositiveButton(R.string.location_dialog_enable, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogPositiveClick(DialogLocationProvider.this);
+                        mListener.onDialogPositiveClick(LocationProviderDialog.this);
                     }
                 })
                 .setNegativeButton(R.string.location_dialog_quit, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNegativeClick(DialogLocationProvider.this);
+                        mListener.onDialogNegativeClick(LocationProviderDialog.this);
                     }
                 });
         return builder.create();

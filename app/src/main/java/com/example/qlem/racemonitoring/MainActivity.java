@@ -17,21 +17,25 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.qlem.racemonitoring.dialogs.AppHelpDialog;
+import com.example.qlem.racemonitoring.dialogs.LocationProviderDialog;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements DialogLocationProvider.NoticeDialogListener {
+public class MainActivity extends AppCompatActivity implements LocationProviderDialog.NoticeDialogListener {
 
     private final int REQUEST_PERMISSION_CODE = 1;
     List<Location> locations;
     Button mainButton;
     RecordingIndicatorView recordingIndicator;
-    DialogLocationProvider dialog;
     LocationManager locationManager;
 
     private void switchToRecordingMode() {
@@ -127,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements DialogLocationPro
 
     void checkDeviceLocation() {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            dialog.show(getSupportFragmentManager(), "location_dialog");
+            DialogFragment dialog = new LocationProviderDialog();
+            dialog.show(getSupportFragmentManager(), "location_provider");
         }
     }
 
@@ -149,9 +154,6 @@ public class MainActivity extends AppCompatActivity implements DialogLocationPro
 
         recordingIndicator = findViewById(R.id.recording_indicator);
         mainButton = findViewById(R.id.main_button);
-
-        // init dialog location provider
-        dialog = new DialogLocationProvider();
 
         // ask permissions
         askPermissions();
@@ -204,5 +206,23 @@ public class MainActivity extends AppCompatActivity implements DialogLocationPro
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.info_action:
+                DialogFragment dialog = new AppHelpDialog();
+                dialog.show(getSupportFragmentManager(), "app_help");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
