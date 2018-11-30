@@ -54,7 +54,6 @@ public class RaceReportActivity extends AppCompatActivity {
 
         // distance views
         TextView distanceValueView = findViewById(R.id.distance_value);
-        TextView distanceUnitView = findViewById(R.id.distance_unit);
 
         // speed views
         TextView speedMaxView = findViewById(R.id.speed_max_value);
@@ -134,11 +133,10 @@ public class RaceReportActivity extends AppCompatActivity {
         if (distance >= 1000) {
             distance = distance / 1000;
             nf.setMaximumFractionDigits(2);
-            distanceUnitView.setText(R.string.distance_unit_km);
-            distanceValueView.setText(nf.format(distance));
+            distanceValueView.setText(String.format("%s km", nf.format(distance)));
         } else {
             nf.setMaximumFractionDigits(0);
-            distanceValueView.setText(nf.format(distance));
+            distanceValueView.setText(String.format("%s m", nf.format(distance)));
         }
 
         // set textView speed

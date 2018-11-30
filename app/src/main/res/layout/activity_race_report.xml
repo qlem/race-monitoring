@@ -4,19 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+    <View
+        android:id="@+id/spacer_1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/time_value" />
+
+    <View
+        android:id="@+id/spacer_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/speed_min_value" />
+
+    <View
+        android:id="@+id/spacer_3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/elevation_gain_value" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.45" />
+        app:layout_constraintGuide_percent="0.4" />
 
     <TextView
         android:id="@+id/distance_label"
@@ -26,6 +43,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/distance_label"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,22 +51,13 @@
         android:id="@+id/distance_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"
         android:text="@string/distance_value"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/distance_label" />
-
-    <TextView
-        android:id="@+id/distance_unit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/distance_unit_m"
-        app:layout_constraintStart_toEndOf="@+id/distance_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/distance_label" />
 
     <TextView
@@ -59,26 +68,22 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:text="@string/time_label"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/time_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
         android:text="@string/time_value"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/time_label" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="distance_value,distance_unit,time_value" />
 
     <TextView
         android:id="@+id/speed_label"
@@ -86,21 +91,21 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="@string/speed_label"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/barrier1" />
+        app:layout_constraintTop_toBottomOf="@+id/spacer_1" />
 
     <TextView
         android:id="@+id/speed_max_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/speed_max_label"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/speed_max_value"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/speed_max_value"
@@ -108,8 +113,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/speed_max_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/speed_max_label"
         app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
 
@@ -119,10 +126,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/speed_min_label"
-        app:layout_constraintStart_toEndOf="@+id/speed_max_value"
-        app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/speed_min_value"
+        app:layout_constraintStart_toEndOf="@+id/speed_max_value" />
 
     <TextView
         android:id="@+id/speed_min_value"
@@ -130,8 +136,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/speed_min_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/speed_min_label"
         app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
 
@@ -141,10 +149,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/speed_avg_label"
-        app:layout_constraintStart_toEndOf="@+id/speed_min_value"
-        app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/speed_avg_value"
+        app:layout_constraintStart_toEndOf="@+id/speed_min_value" />
 
     <TextView
         android:id="@+id/speed_avg_value"
@@ -152,8 +159,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/speed_avg_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/speed_avg_label"
         app:layout_constraintTop_toBottomOf="@+id/speed_unit" />
 
@@ -163,17 +172,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="@string/speed_unit"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/speed_label"
-        app:layout_constraintTop_toTopOf="@+id/barrier1" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="speed_max_label,speed_max_value,speed_min_label,speed_min_value,speed_avg_label,speed_avg_value"/>
+        app:layout_constraintTop_toBottomOf="@+id/spacer_1" />
 
     <TextView
         android:id="@+id/elevation_label"
@@ -181,21 +184,21 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="@string/elevation_label"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/barrier2" />
+        app:layout_constraintTop_toBottomOf="@+id/spacer_2" />
 
     <TextView
         android:id="@+id/elevation_max_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/elevation_max_label"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_max_value"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/elevation_max_value"
@@ -203,8 +206,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/elevation_max_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_max_label"
         app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
 
@@ -214,10 +219,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/elevation_min_label"
-        app:layout_constraintStart_toEndOf="@+id/elevation_max_value"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_min_value"
+        app:layout_constraintStart_toEndOf="@+id/elevation_max_value" />
 
     <TextView
         android:id="@+id/elevation_min_value"
@@ -225,8 +229,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/elevation_min_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_min_label"
         app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
 
@@ -236,10 +242,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/elevation_gain_label"
-        app:layout_constraintStart_toEndOf="@+id/elevation_min_value"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_gain_value"
+        app:layout_constraintStart_toEndOf="@+id/elevation_min_value" />
 
     <TextView
         android:id="@+id/elevation_gain_value"
@@ -247,8 +252,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/elevation_gain_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_gain_label"
         app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
 
@@ -258,10 +265,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:text="@string/elevation_loss_label"
-        app:layout_constraintStart_toEndOf="@+id/elevation_gain_value"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/elevation_loss_value"
+        app:layout_constraintStart_toEndOf="@+id/elevation_gain_value" />
 
     <TextView
         android:id="@+id/elevation_loss_value"
@@ -269,8 +275,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/elevation_loss_value"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_loss_label"
         app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
 
@@ -280,26 +288,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="@string/elevation_unit"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toTopOf="@+id/barrier2" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="elevation_max_label,elevation_max_value,elevation_min_label,elevation_min_value,elevation_gain_label,elevation_gain_value,elevation_loss_label,elevation_loss_value" />
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@+id/elevation_label"
+        app:layout_constraintTop_toBottomOf="@+id/spacer_2" />
 
     <com.example.qlem.racemonitoring.graph.RaceGraphView
         android:id="@+id/race_graph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/barrier3" />
+        app:layout_constraintTop_toBottomOf="@+id/spacer_3" />
 
 </android.support.constraint.ConstraintLayout>

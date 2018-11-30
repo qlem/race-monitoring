@@ -8,9 +8,7 @@
     <string name="time_value">0s</string>
 
     <string name="distance_label">distance</string>
-    <string name="distance_value">0</string>
-    <string name="distance_unit_m">m</string>
-    <string name="distance_unit_km">km</string>
+    <string name="distance_value">0 m</string>
 
     <string name="speed_label">speed</string>
     <string name="speed_max_label">max</string>

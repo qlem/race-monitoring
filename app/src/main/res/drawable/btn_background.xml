@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- <item android:drawable="@drawable/background"
-        android:width="180dp"
-        android:height="180dp" /> -->
-    <item>
-        <shape android:shape="oval">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
 
-            <size android:width="180dp"
-                android:height="180dp"/>
-            <solid android:color="@color/mainColor"/>
-            <stroke android:width="8dp"
-                android:color="@android:color/white"/>
+        <size android:width="180dp"
+            android:height="180dp"/>
 
-        </shape>
-    </item>
-</layer-list>
+        <solid android:color="@color/mainColor"/>
+
+        <stroke android:width="8dp"
+            android:color="@android:color/white"/>
+
+</shape>
