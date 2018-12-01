@@ -55,7 +55,7 @@ class GPXFileWriter {
 
         // tries to creates the GPX folder
         File dir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS), "Race Monitoring GPX");
+                Environment.DIRECTORY_DOWNLOADS), "GPStracks");
         if (!dir.exists() && !dir.mkdirs()) {
             Toast.makeText(context, "Cannot create GPX directory into external storage",
                     Toast.LENGTH_SHORT).show();
