@@ -44,9 +44,10 @@ public class LocationService extends Service {
      * and the main activity for communicate.
      */
     public static final String ACTION_PING = LocationService.class.getName() + ".PING";
-    public static final String ACTION_PONG = LocationService.class.getName() + ".PONG";
+    public static final String ACTION_ALIVE = LocationService.class.getName() + ".ALIVE";
     public static final String ACTION_UPDATE = LocationService.class.getName() + ".UPDATE";
     public static final String ACTION_STOP = LocationService.class.getName() + ".STOP";
+    public static final String ACTION_RESULT = LocationService.class.getName() + ".RESULT";
 
     /**
      * This variable initializes the location listener.
@@ -94,35 +95,17 @@ public class LocationService extends Service {
     };
 
     /**
-     * This function initializes the broadcast receiver for handle
-     * the sent messages by the main activity.
-     */
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-
-        /**
-         * Triggered when the receiver receive an intent.
-         * @param context the context
-         * @param intent the received intent
-         */
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action != null && action.equals(LocationService.ACTION_PING)) {
-                sendBroadcast(new Intent(ACTION_PONG));
-            }
-        }
-    };
-
-    /**
      * This function starts the service in the foreground by creating a notification.
      */
     private void startForeground() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        // notificationIntent.setAction(Intent.ACTION_MAIN);
+        // notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String CHANNEL_ID = "RMSChannel";
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
@@ -139,9 +122,40 @@ public class LocationService extends Service {
                 .setContentIntent(pendingIntent)
                 .setTicker(getString(R.string.notification_ticker))
                 .build();
-
         startForeground(42, notification);
     }
+
+    /**
+     * This function initializes the broadcast receiver that allows to communicate with
+     * the main activity.
+     */
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        /**
+         * Triggered when the service receive an intent from the main activity.
+         * @param context the context
+         * @param intent the received intent
+         */
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // get action
+            String action = intent.getAction();
+
+            // if receives "ping", sends "pong"
+            if (action != null && action.equals(LocationService.ACTION_PING)) {
+                sendBroadcast(new Intent(ACTION_ALIVE));
+            }
+
+            // if receives "stop", sends locations list then stops self
+            else if (action != null && action.equals(LocationService.ACTION_STOP)) {
+                Intent result = new Intent(ACTION_RESULT);
+                result.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
+                sendBroadcast(result);
+                stopSelf();
+            }
+        }
+    };
 
     /**
      * This function is called at the creation of the service.
@@ -153,7 +167,10 @@ public class LocationService extends Service {
         startForeground();
 
         // register the broadcast receiver
-        registerReceiver(broadcastReceiver, new IntentFilter(ACTION_PING));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PING);
+        intentFilter.addAction(ACTION_STOP);
+        registerReceiver(broadcastReceiver, intentFilter);
 
         // init the locations list
         locations = new ArrayList<>();
@@ -168,7 +185,7 @@ public class LocationService extends Service {
     }
 
     /**
-     * This function is called when the service is started
+     * This function is called when the service is started.
      * @param intent the sent intent
      * @param flags some flags
      * @param startId the id that identifies that call
@@ -194,11 +211,6 @@ public class LocationService extends Service {
      */
     @Override
     public void onDestroy() {
-
-        Intent intent = new Intent(ACTION_STOP);
-        intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-        sendBroadcast(intent);
-
         locationManager.removeUpdates(locationListener);
         unregisterReceiver(broadcastReceiver);
     }

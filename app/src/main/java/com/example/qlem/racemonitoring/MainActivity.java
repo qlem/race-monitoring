@@ -44,22 +44,22 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     /**
      * The list of the locations points.
      */
-    List<Location> locations;
+    private List<Location> locations;
 
     /**
      * The main button that allows to start and stop the recording.
      */
-    Button mainButton;
+    private Button mainButton;
 
     /**
      * A small indicator that indicates the state of the service and when a location update occurs.
      */
-    RecordingIndicatorView recordingIndicator;
+    private RecordingIndicatorView recordingIndicator;
 
     /**
      * The variable provides some information about the location provider.
      */
-    LocationManager locationManager;
+    private LocationManager locationManager;
 
     /**
      * Function that switch the main button to the "recording" mode.
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
                 switchToReadyToGoMode();
 
                 // stop the service
-                stopService(new Intent(MainActivity.this, LocationService.class));
+                sendBroadcast(new Intent(LocationService.ACTION_STOP));
             }
         });
     }
@@ -134,49 +134,49 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     }
 
     /**
-     * This function initializes the broadcast receiver for handle
-     * the sent messages by the service.
+     * This function initializes the broadcast receiver that allows to communicate with
+     * the service.
      */
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         /**
-         * Triggered when the receiver receive an intent.
+         * Triggered when the receiver receive an intent from the service.
          * @param context the context
          * @param intent the received intent
          */
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            // get action
             String action = intent.getAction();
-            if (action != null) {
 
-                // excepted action after the sending of ACTION_PING if the service is alive
-                if (action.equals(LocationService.ACTION_PONG)) {
-                    recordingIndicator.startRecording();
-                    switchToRecordingMode();
+            // excepted action after the sending of ACTION_PING for check if the service is alive
+            if (action != null && action.equals(LocationService.ACTION_ALIVE)) {
+                recordingIndicator.startRecording();
+                switchToRecordingMode();
+            }
+
+            // warns that a location update occur
+            else if (action != null && action.equals(LocationService.ACTION_UPDATE)) {
+                recordingIndicator.locationUpdate();
+            }
+
+            // excepted action when the service is stopped, contains the locations list
+            else if (action != null && action.equals(LocationService.ACTION_RESULT)) {
+                locations = intent.getParcelableArrayListExtra("locations");
+                if (locations == null || locations.size() == 0) {
+                    Toast.makeText(MainActivity.this,
+                            "Nothing to display", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                // warns that a location update occur
-                else if (action.equals(LocationService.ACTION_UPDATE)) {
-                    recordingIndicator.locationUpdate();
-                }
+                writeGPXFile();
 
-                // excepted action when the service is stopped, contains the locations list
-                else if (action.equals(LocationService.ACTION_STOP)) {
-                    locations = intent.getParcelableArrayListExtra("locations");
-                    if (locations == null || locations.size() == 0) {
-                        Toast.makeText(MainActivity.this,
-                                "Nothing to display", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                intent = new Intent(MainActivity.this, RaceReportActivity.class);
+                intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
+                startActivity(intent);
 
-                    writeGPXFile();
-
-                    intent = new Intent(MainActivity.this, RaceReportActivity.class);
-                    intent.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-                    startActivity(intent);
-
-                    locations.clear();
-                }
+                locations.clear();
             }
         }
     };
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     /**
      * This function checks if the device location is enabled, if not show a pop-up dialog.
      */
-    void checkDeviceLocation() {
+    private void checkDeviceLocation() {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             DialogFragment dialog = new LocationProviderDialog();
             dialog.show(getSupportFragmentManager(), "location_provider");
@@ -227,9 +227,9 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
 
         // init broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(LocationService.ACTION_PONG);
-        intentFilter.addAction(LocationService.ACTION_STOP);
+        intentFilter.addAction(LocationService.ACTION_ALIVE);
         intentFilter.addAction(LocationService.ACTION_UPDATE);
+        intentFilter.addAction(LocationService.ACTION_RESULT);
         registerReceiver(broadcastReceiver, intentFilter);
 
         // switch view to ready to start mode
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     }
 
     /**
-     * Function called when the activity is destroy.
+     * Function called when the activity is destroyed.
      */
     @Override
     protected void onDestroy() {
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
      * @param dialog the triggered dialog
      */
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onOpenSettingsClick(DialogFragment dialog) {
         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
 

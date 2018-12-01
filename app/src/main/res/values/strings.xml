@@ -43,7 +43,11 @@
     <string name="location_dialog_enable">OPEN SETTINGS</string>
     <string name="location_dialog_quit">QUIT</string>
 
-    <string name="app_help_title">Help</string>
-    <string name="app_help_message">Press the button for start or stop recording. Ensure that you have enabled the device location.</string>
+    <string name="app_help_title">Tips</string>
+    <string name="app_help_message">Press the button for start or stop recording.
+        Ensure that you have enabled the device location.\n\n
+        When you stop recording, a GPX file is created into the external storage of your device and
+        an overview of your race is displayed.
+    </string>
     <string name="app_help_ok">OK</string>
 </resources>

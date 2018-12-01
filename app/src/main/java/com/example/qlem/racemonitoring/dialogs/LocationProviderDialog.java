@@ -24,7 +24,7 @@ public class LocationProviderDialog extends DialogFragment {
      * This interface defines the click listener to implement.
      */
     public interface NoticeDialogListener {
-        void onDialogPositiveClick(DialogFragment dialog);
+        void onOpenSettingsClick(DialogFragment dialog);
     }
 
     /**
@@ -40,7 +40,7 @@ public class LocationProviderDialog extends DialogFragment {
         builder.setMessage(R.string.location_dialog_message)
                 .setPositiveButton(R.string.location_dialog_enable, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogPositiveClick(LocationProviderDialog.this);
+                        mListener.onOpenSettingsClick(LocationProviderDialog.this);
                     }
                 });
         return builder.create();
