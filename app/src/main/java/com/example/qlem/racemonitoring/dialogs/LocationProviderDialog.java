@@ -10,14 +10,28 @@ import android.support.v4.app.DialogFragment;
 
 import com.example.qlem.racemonitoring.R;
 
+/**
+ * This class creates a pop-up window that warns the user that the device location is disabled.
+ */
 public class LocationProviderDialog extends DialogFragment {
 
+    /**
+     * This variable stores the listener.
+     */
     private NoticeDialogListener mListener;
 
+    /**
+     * This interface defines the click listener to implement.
+     */
     public interface NoticeDialogListener {
         void onDialogPositiveClick(DialogFragment dialog);
     }
 
+    /**
+     * Function called at the creation, initializes the dialog.
+     * @param savedInstanceState the saved state
+     * @return the dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -32,6 +46,10 @@ public class LocationProviderDialog extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Function called when the dialog is attached to an activity, initializes the listener.
+     * @param context the context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

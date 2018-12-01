@@ -3,13 +3,25 @@ package com.example.qlem.racemonitoring.graph;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * This class represents a parcelable object that contains a speed value.
+ */
 public class Speed implements Parcelable {
 
+    /**
+     * The speed value.
+     */
     public float speed;
 
+    /**
+     * Default constructor of the class.
+     * @param speed the speed value.
+     */
     public Speed(float speed) {
         this.speed = speed;
     }
+
+    // TODO add headers
 
     private Speed(Parcel in) {
         speed = in.readFloat();

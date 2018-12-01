@@ -9,8 +9,17 @@ import android.support.v4.app.DialogFragment;
 
 import com.example.qlem.racemonitoring.R;
 
+/**
+ * This class creates a pop-up window that provides tips about the app
+ * when user performs a click on the help button.
+ */
 public class AppHelpDialog extends DialogFragment {
 
+    /**
+     * Function called at the creation, initializes the dialog.
+     * @param savedInstanceState the saved state
+     * @return the dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

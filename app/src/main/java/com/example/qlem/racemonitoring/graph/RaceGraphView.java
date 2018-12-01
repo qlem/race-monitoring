@@ -13,17 +13,29 @@ import com.example.qlem.racemonitoring.R;
 import java.text.NumberFormat;
 import java.util.List;
 
+/**
+ * This class creates and displays the graph of the altitude and speed variations.
+ */
 public class RaceGraphView extends View {
 
+    /**
+     * The lists of the altitude values and speed values.
+     */
     private List<Altitude> altitudes;
     private List<Speed> speeds;
 
+    /**
+     * Some constant variables abouts the view's measures.
+     */
     private int VIEW_WIDTH;
     private float GRAPH_WIDTH;
     private float GRAPH_HEIGHT;
     private float GRAPH_START_X;
     private float GRAPH_START_Y;
 
+    /**
+     * Some variables about the collections.
+     */
     private float maxAltitude;
     private float minAltitude;
     private float diffAltitude;
@@ -31,31 +43,53 @@ public class RaceGraphView extends View {
     private float minSpeed;
     private float diffSpeed;
 
-    private Paint pen;
+    /**
+     * Boolean values that indicates if yes or not there is variations into each list.
+     */
+    boolean staticAltitude;
+    boolean staticSpeed;
 
+    /**
+     * Some other variables.
+     */
+    private Paint pen;
     private int speedColor;
     private int altitudeColor;
     private int axesColor;
 
-    boolean staticAltitude;
-    boolean staticSpeed;
-
-
+    /**
+     * Class constructor.
+     * @param context a context
+     */
     public RaceGraphView(Context context) {
         super(context);
         init();
     }
 
+    /**
+     * Class constructor.
+     * @param context a context
+     * @param attrs a set of attributes
+     */
     public RaceGraphView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
+    /**
+     * Class constructor.
+     * @param context a context
+     * @param attrs a set of attributes
+     * @param defStyleAttr a style attribute
+     */
     public RaceGraphView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
+    /**
+     * Function that is called in each constructor for initializes some variables.
+     */
     private void init() {
         pen = new Paint(Paint.ANTI_ALIAS_FLAG);
         altitudeColor = Color.rgb(44, 214, 32);
@@ -65,6 +99,10 @@ public class RaceGraphView extends View {
         staticSpeed = false;
     }
 
+    /**
+     * Function that is called for set the data used for draw the graph.
+     * @param collection a bundle object that contains lists and some important values.
+     */
     public void setCollection(Bundle collection) {
         altitudes = collection.getParcelableArrayList("altitudes");
         speeds = collection.getParcelableArrayList("speeds");
@@ -77,6 +115,10 @@ public class RaceGraphView extends View {
         invalidate();
     }
 
+    /**
+     * This function is called for draw labels, legends and some indicator lines.
+     * @param canvas the canvas of the view
+     */
     private void drawLabels(Canvas canvas) {
 
         // init number format
@@ -86,6 +128,7 @@ public class RaceGraphView extends View {
 
         float x;
         float y = (GRAPH_HEIGHT / 2) + GRAPH_START_Y;
+        // in case where no variations detected
         if (maxAltitude == minAltitude) {
             x = GRAPH_START_X - 12;
             pen.setTextSize((float) (VIEW_WIDTH * 0.025));
@@ -169,8 +212,13 @@ public class RaceGraphView extends View {
         }
     }
 
+    /**
+     * This function is called for draw the altitude and speed curves.
+     * @param canvas the canvas of the view.
+     */
     private void drawCurves(Canvas canvas) {
 
+        // init vars
         float startX;
         float stopX;
         float startY;
@@ -182,6 +230,7 @@ public class RaceGraphView extends View {
 
         pen.setStrokeWidth(5);
 
+        // in case where no variations detected
         if (staticAltitude) {
             startX = GRAPH_START_X;
             startY = (GRAPH_HEIGHT / 2) + GRAPH_START_Y;
@@ -203,11 +252,13 @@ public class RaceGraphView extends View {
             return;
         }
 
+        // loop through the collection
         int sizeList = altitudes.size();
         for (int i = 0; i < sizeList - 1; i++) {
             startX = i * GRAPH_WIDTH / (sizeList - 1) + GRAPH_START_X;
             stopX = (i + 1) * GRAPH_WIDTH / (sizeList - 1) + GRAPH_START_X;
 
+            // draw a altitude line between two points
             if (!staticAltitude) {
                 currentAltitude = altitudes.get(i).altitude;
                 nextAltitude = altitudes.get(i + 1).altitude;
@@ -217,6 +268,7 @@ public class RaceGraphView extends View {
                 canvas.drawLine(startX, startY, stopX, stopY, pen);
             }
 
+            // draw a speed line between two points
             if (!staticSpeed) {
                 currentSpeed = speeds.get(i).speed;
                 nextSpeed = speeds.get(i + 1).speed;
@@ -228,6 +280,10 @@ public class RaceGraphView extends View {
         }
     }
 
+    /**
+     * This function is called for draw the view.
+     * @param canvas the canvas of the view
+     */
     @Override
     protected void onDraw (Canvas canvas) {
 
@@ -240,16 +296,26 @@ public class RaceGraphView extends View {
         float right = GRAPH_START_X + GRAPH_WIDTH;
         float bottom = GRAPH_START_Y + GRAPH_HEIGHT;
 
+        // draw axes
         pen.setStrokeWidth(6);
         pen.setColor(axesColor);
         canvas.drawLine(left - 3, top - 10, left - 3, bottom + 6, pen);
         canvas.drawLine(left - 6, bottom + 3, right + 6, bottom + 3, pen);
         canvas.drawLine(right + 3, bottom + 6, right + 3, top - 10, pen);
 
+        // draw labels and legends
         drawLabels(canvas);
+
+        // draw curves
         drawCurves(canvas);
     }
 
+    /**
+     * Function that is called at the creation of the view allows to handle and set the size
+     * and measures of the view.
+     * @param widthMeasureSpec the width screen
+     * @param heightMeasureSpec the height screen
+     */
     @Override
     protected void onMeasure (int widthMeasureSpec, int heightMeasureSpec) {
         int widthScreen = MeasureSpec.getSize(widthMeasureSpec);

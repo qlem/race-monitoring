@@ -30,14 +30,40 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This is the main activity class, allows to start and stop the service that records the location
+ * points of the race. When the user stops the recording, main activity start the report activity.
+ */
 public class MainActivity extends AppCompatActivity implements LocationProviderDialog.NoticeDialogListener {
 
+    /**
+     * Code of the request permission.
+     */
     private final int REQUEST_PERMISSION_CODE = 1;
+
+    /**
+     * The list of the locations points.
+     */
     List<Location> locations;
+
+    /**
+     * The main button that allows to start and stop the recording.
+     */
     Button mainButton;
+
+    /**
+     * A small indicator that indicates the state of the service and when a location update occurs.
+     */
     RecordingIndicatorView recordingIndicator;
+
+    /**
+     * The variable provides some information about the location provider.
+     */
     LocationManager locationManager;
 
+    /**
+     * Function that switch the main button to the "recording" mode.
+     */
     private void switchToRecordingMode() {
         mainButton.setText(R.string.btn_stop);
         mainButton.setOnClickListener(new View.OnClickListener() {
@@ -54,12 +80,16 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         });
     }
 
+    /**
+     * Function that switch the main button to the "ready to go" mode.
+     */
     private void switchToReadyToGoMode() {
         mainButton.setText(R.string.btn_start);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                // check location permission
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "App cannot access to location: permission denied",
@@ -67,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
                     return;
                 }
 
+                // check location provider state
                 if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     Toast.makeText(MainActivity.this, "Device location disabled",
                             Toast.LENGTH_SHORT).show();
@@ -88,6 +119,9 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         });
     }
 
+    /**
+     * This function is used initialize the GPX file writer class for save the GPX file.
+     */
     private void writeGPXFile() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -99,17 +133,35 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         writer.writeGPXFile(new Date());
     }
 
+    /**
+     * This function initializes the broadcast receiver for handle
+     * the sent messages by the service.
+     */
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        /**
+         * Triggered when the receiver receive an intent.
+         * @param context the context
+         * @param intent the received intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action != null) {
+
+                // excepted action after the sending of ACTION_PING if the service is alive
                 if (action.equals(LocationService.ACTION_PONG)) {
                     recordingIndicator.startRecording();
                     switchToRecordingMode();
-                } else if (action.equals(LocationService.ACTION_UPDATE)) {
+                }
+
+                // warns that a location update occur
+                else if (action.equals(LocationService.ACTION_UPDATE)) {
                     recordingIndicator.locationUpdate();
-                } else if (action.equals(LocationService.ACTION_STOP)) {
+                }
+
+                // excepted action when the service is stopped, contains the locations list
+                else if (action.equals(LocationService.ACTION_STOP)) {
                     locations = intent.getParcelableArrayListExtra("locations");
                     if (locations == null || locations.size() == 0) {
                         Toast.makeText(MainActivity.this,
@@ -129,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         }
     };
 
+    /**
+     * This function checks if the device location is enabled, if not show a pop-up dialog.
+     */
     void checkDeviceLocation() {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             DialogFragment dialog = new LocationProviderDialog();
@@ -136,6 +191,10 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         }
     }
 
+    /**
+     * This function checks if the app has permission for location access and
+     * external storage access. If not, requests the permission(s).
+     */
     private void askPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED ||
@@ -147,6 +206,10 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         // TODO use ActivityCompat.shouldShowRequestPermissionRationale
     }
 
+    /**
+     * Function that is called at the creation of the activity.
+     * @param savedInstanceState the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,6 +239,12 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         sendBroadcast(new Intent(LocationService.ACTION_PING));
     }
 
+    /**
+     * This function is called when user answers to the request permission dialogs.
+     * @param requestCode the request code
+     * @param permissions the asked permissions
+     * @param grantResults the grant result (the user's decisions)
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -192,23 +261,41 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         }
     }
 
+    /**
+     * Function called when the activity is destroy.
+     */
     @Override
     protected void onDestroy() {
         unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 
+    /**
+     * Event listener triggered when user performs click on the "open settings" of the location
+     * provider dialog. Opens the location settings.
+     * @param dialog the triggered dialog
+     */
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
 
+    /**
+     * Function that is called at the creation of the menu, initializes the menu.
+     * @param menu the menu to inflate
+     * @return true or false
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Triggered when the user performs click on the help menu, show a dialog helper.
+     * @param item the button help
+     * @return true or false
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -14,17 +14,39 @@ import com.example.qlem.racemonitoring.graph.Speed;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+/**
+ * This is the report activity that provides an overview of the race.
+ */
 public class RaceReportActivity extends AppCompatActivity {
 
+    /**
+     * The list that contains all GPS points of the race.
+     */
     private List<Location> locations;
+
+    /**
+     * The list to fill of the altitude of each GPS point.
+     */
     private List<Altitude> altitudes;
+
+    /**
+     * The list to fill of the speed of each GPS point.
+     */
     private List<Speed> speeds;
+
+    /**
+     * Some other important values.
+     */
     private float altMax;
     private float altMin;
     private float speedMax;
     private float speedMin;
 
+    /**
+     * Function that sets the view of the race duration.
+     */
     private void displayTimeRace() {
         TextView timeView = findViewById(R.id.time_value);
 
@@ -42,14 +64,18 @@ public class RaceReportActivity extends AppCompatActivity {
         int hours   = (int) ((diff / (1000*60*60)) % 24);
 
         if (hours > 0) {
-            timeView.setText(String.format("%dh %dm %ds", hours, minutes, seconds));
+            timeView.setText(String.format(Locale.getDefault(), "%dh %dm %ds", hours, minutes, seconds));
         } else if (minutes > 0 ) {
-            timeView.setText(String.format("%dm %ds", minutes, seconds));
+            timeView.setText(String.format(Locale.getDefault(), "%dm %ds", minutes, seconds));
         } else {
-            timeView.setText(String.format("%ds", seconds));
+            timeView.setText(String.format(Locale.getDefault(), "%ds", seconds));
         }
     }
 
+    /**
+     * Function that sets the distance information view, the altitude information view and
+     * the speed information view.
+     */
     private void displayRaceOverview() {
 
         // distance views
@@ -82,12 +108,12 @@ public class RaceReportActivity extends AppCompatActivity {
             // init current location
             Location current = locations.get(i);
 
-            // distance
+            // compute distance
             if (i < locations.size() - 1) {
                 distance += current.distanceTo(locations.get(i + 1));
             }
 
-            // speed
+            // compute speed
             if (i < locations.size() - 1) {
                 float time = (locations.get(i + 1).getTime() - current.getTime()) / 1000;
                 float dist = current.distanceTo(locations.get(i + 1));
@@ -105,7 +131,7 @@ public class RaceReportActivity extends AppCompatActivity {
                 speeds.add(speed);
             }
 
-            // altitude
+            // compute altitude
             Altitude altitude = new Altitude((float) current.getAltitude());
             if (i == 0) {
                 altMax = altitude.altitude;
@@ -129,7 +155,7 @@ public class RaceReportActivity extends AppCompatActivity {
 
         NumberFormat nf = NumberFormat.getInstance();
 
-        // set textView distance
+        // set distance views
         if (distance >= 1000) {
             distance = distance / 1000;
             nf.setMaximumFractionDigits(2);
@@ -139,7 +165,7 @@ public class RaceReportActivity extends AppCompatActivity {
             distanceValueView.setText(String.format("%sm", nf.format(distance)));
         }
 
-        // set textView speed
+        // set speed views
         float avg = 0;
         if (speeds.size() != 0 && speedTotal != 0) {
             avg = speedTotal / speeds.size();
@@ -150,7 +176,7 @@ public class RaceReportActivity extends AppCompatActivity {
         speedMinView.setText(nf.format(speedMin));
         speedAvgView.setText(nf.format(avg));
 
-        // set textView altitude
+        // set altitude views
         nf.setMaximumFractionDigits(0);
         altMaxView.setText(nf.format(altMax));
         altMinView.setText(nf.format(altMin));
@@ -158,20 +184,29 @@ public class RaceReportActivity extends AppCompatActivity {
         altLossView.setText(nf.format(altLoss));
     }
 
+    /**
+     * Function called at the creation of the activity, initializes some variables.
+     * @param savedInstanceState the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_race_report);
 
+        // recover locations list from main activity
         Intent intent = getIntent();
         locations = intent.getParcelableArrayListExtra("locations");
 
+        // init altitudes and speeds lists
         altitudes = new ArrayList<>();
         speeds = new ArrayList<>();
 
+        // display race overview
         displayTimeRace();
         displayRaceOverview();
 
+        // init an object that contains altitudes / speeds lists and other important variables
+        // and set the collection of the graph view.
         RaceGraphView raceGraph = findViewById(R.id.race_graph);
         Bundle collection = new Bundle();
         collection.putParcelableArrayList("speeds", (ArrayList<? extends Parcelable>) speeds);
