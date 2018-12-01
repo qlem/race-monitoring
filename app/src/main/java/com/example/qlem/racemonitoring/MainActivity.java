@@ -218,6 +218,9 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         recordingIndicator = findViewById(R.id.recording_indicator);
         mainButton = findViewById(R.id.main_button);
 
+        // switch view to ready to start mode
+        switchToReadyToGoMode();
+
         // ask permissions
         askPermissions();
 
@@ -231,9 +234,6 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         intentFilter.addAction(LocationService.ACTION_UPDATE);
         intentFilter.addAction(LocationService.ACTION_RESULT);
         registerReceiver(broadcastReceiver, intentFilter);
-
-        // switch view to ready to start mode
-        switchToReadyToGoMode();
 
         // ping the service for check if it is running
         sendBroadcast(new Intent(LocationService.ACTION_PING));

@@ -1,7 +1,6 @@
 package com.example.qlem.racemonitoring;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -20,6 +19,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,16 @@ public class LocationService extends Service {
      * The list of the location points.
      */
     private List<Location> locations;
+
+    /**
+     * The channel notification id.
+     */
+    private static final String CHANNEL_ID = "RMSChannel";
+
+    /**
+     * The notification id.
+     */
+    private static final Integer NOTIFICATION_ID = 42;
 
     /**
      * Some constant variables that represent the actions sent between the service
@@ -81,7 +91,9 @@ public class LocationService extends Service {
          */
         @Override
         public void onProviderEnabled(String provider) {
-
+            Toast.makeText(LocationService.this, "Race Monitoring Service resumes " +
+                    "recording", Toast.LENGTH_SHORT).show();
+            startForeground(false);
         }
 
         /**
@@ -90,22 +102,13 @@ public class LocationService extends Service {
          */
         @Override
         public void onProviderDisabled(String provider) {
-
+            Toast.makeText(LocationService.this, "Race Monitoring Service cannot " +
+                    "record", Toast.LENGTH_SHORT).show();
+            startForeground(true);
         }
     };
 
-    /**
-     * This function starts the service in the foreground by creating a notification.
-     */
-    private void startForeground() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        // notificationIntent.setAction(Intent.ACTION_MAIN);
-        // notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String CHANNEL_ID = "RMSChannel";
+    private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
@@ -114,15 +117,28 @@ public class LocationService extends Service {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
 
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle(getString(R.string.notification_title))
-                .setContentText(getString(R.string.notification_text))
-                .setSmallIcon(R.drawable.ic_service)
-                .setContentIntent(pendingIntent)
-                .setTicker(getString(R.string.notification_ticker))
-                .build();
-        startForeground(42, notification);
+    /**
+     * This function starts the service in the foreground by creating a notification.
+     */
+    private void startForeground(boolean locationDisabled) {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        builder.setContentTitle(getString(R.string.notification_title));
+        if (locationDisabled) {
+            builder.setContentText(getString(R.string.notification_text_err));
+        } else {
+            builder.setContentText(getString(R.string.notification_text));
+        }
+        builder.setSmallIcon(R.drawable.ic_service);
+        builder.setContentIntent(pendingIntent);
+        builder.setTicker(getString(R.string.notification_ticker));
+        startForeground(NOTIFICATION_ID, builder.build());
     }
 
     /**
@@ -163,8 +179,18 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
 
+        // init location manager
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // init the notification channel
+        createNotificationChannel();
+
         // start the service in foreground
-        startForeground();
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            startForeground(true);
+        } else {
+            startForeground(false);
+        }
 
         // register the broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
@@ -180,7 +206,6 @@ public class LocationService extends Service {
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, locationListener);
     }
 
