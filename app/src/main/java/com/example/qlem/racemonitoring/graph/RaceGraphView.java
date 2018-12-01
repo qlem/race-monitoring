@@ -88,17 +88,17 @@ public class RaceGraphView extends View {
         float y = (GRAPH_HEIGHT / 2) + GRAPH_START_Y;
         if (maxAltitude == minAltitude) {
             x = GRAPH_START_X - 12;
-            pen.setColor(altitudeColor);
-            pen.setTextAlign(Paint.Align.RIGHT);
             pen.setTextSize((float) (VIEW_WIDTH * 0.025));
+            pen.setTextAlign(Paint.Align.RIGHT);
+            pen.setColor(altitudeColor);
             canvas.drawText(nf.format(maxAltitude), x, y, pen);
             staticAltitude = true;
         }
         if (maxSpeed == minSpeed) {
             x = GRAPH_START_X + GRAPH_WIDTH + 12;
-            pen.setColor(speedColor);
-            pen.setTextAlign(Paint.Align.LEFT);
             pen.setTextSize((float) (VIEW_WIDTH * 0.025));
+            pen.setTextAlign(Paint.Align.LEFT);
+            pen.setColor(speedColor);
             canvas.drawText(nf.format(maxSpeed), x, y, pen);
             staticSpeed = true;
         }
@@ -112,15 +112,14 @@ public class RaceGraphView extends View {
         canvas.drawText("ALT m", 0, y, pen);
 
         // draw speed label
-        pen.setTextSize((float) (GRAPH_START_Y * 0.4));
         pen.setTextAlign(Paint.Align.RIGHT);
         pen.setColor(speedColor);
         canvas.drawText("m/s SPE", VIEW_WIDTH, y, pen);
 
         // draw min and max value for altitude
-        pen.setTextAlign(Paint.Align.RIGHT);
         pen.setTextSize((float) (VIEW_WIDTH * 0.025));
         pen.setFakeBoldText(false);
+        pen.setTextAlign(Paint.Align.RIGHT);
         pen.setColor(altitudeColor);
         if (!staticAltitude) {
             canvas.drawText(nf.format(maxAltitude), GRAPH_START_X - 12, GRAPH_START_Y, pen);
