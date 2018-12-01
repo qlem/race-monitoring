@@ -31,7 +31,7 @@
     <string name="elevation_unit">m</string>
     
     <string name="notification_title">Race Monitoring Service</string>
-    <string name="notification_text">Records GPS coordinates of your race.</string>
+    <string name="notification_text">Records GPS points of your race.</string>
     <string name="notification_text_err">Cannot records GPS points, device location disabled.</string>
     <string name="notification_ticker">Race Monitoring Service</string>
     <string name="channel_name">Default Channel</string>
@@ -40,7 +40,7 @@
     <string name="action_help">Help</string>
 
     <string name="location_dialog_title">Enable location</string>
-    <string name="location_dialog_message">You must enable device location for race recording.</string>
+    <string name="location_dialog_message">You must enable device location for records GPS points of your race.</string>
     <string name="location_dialog_enable">OPEN SETTINGS</string>
 
     <string name="app_help_title">Tips</string>
