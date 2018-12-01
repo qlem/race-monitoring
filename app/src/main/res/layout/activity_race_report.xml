@@ -43,6 +43,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/distance_label"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,6 +71,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:text="@string/time_label"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -97,6 +99,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/speed_label"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -182,6 +185,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/speed_unit"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/speed_label"
@@ -195,6 +199,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/elevation_label"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -208,7 +213,7 @@
         android:layout_marginLeft="32dp"
         android:text="@string/elevation_max_label"
         app:layout_constraintBaseline_toBaselineOf="@+id/elevation_max_value"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/elevation_unit" />
 
     <TextView
         android:id="@+id/elevation_max_value"
@@ -216,13 +221,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/elevation_max_value"
+        android:textColor="@color/mainColor"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/elevation_max_label"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintTop_toBottomOf="@+id/spacer_2" />
 
     <TextView
         android:id="@+id/elevation_min_label"
@@ -240,13 +245,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/elevation_min_value"
+        android:textColor="@color/mainColor"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:textColor="@color/mainColor"
         app:layout_constraintStart_toEndOf="@+id/elevation_min_label"
-        app:layout_constraintTop_toBottomOf="@+id/elevation_unit" />
+        app:layout_constraintTop_toBottomOf="@+id/spacer_2" />
 
     <TextView
         android:id="@+id/elevation_gain_label"
@@ -256,7 +261,7 @@
         android:layout_marginLeft="32dp"
         android:text="@string/elevation_gain_label"
         app:layout_constraintBaseline_toBaselineOf="@+id/elevation_gain_value"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/elevation_unit" />
 
     <TextView
         android:id="@+id/elevation_gain_value"
@@ -303,6 +308,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/elevation_unit"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/elevation_label"
