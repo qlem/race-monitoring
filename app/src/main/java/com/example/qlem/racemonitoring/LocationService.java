@@ -86,18 +86,16 @@ public class LocationService extends Service {
         }
 
         /**
-         * Triggered when location provider is enabled.
+         * Triggered when location provider is enabled, updates notification.
          * @param provider the provider
          */
         @Override
         public void onProviderEnabled(String provider) {
-            Toast.makeText(LocationService.this, "Race Monitoring Service resumes " +
-                    "recording", Toast.LENGTH_SHORT).show();
             startForeground(false);
         }
 
         /**
-         * Triggered when location provider is disabled.
+         * Triggered when location provider is disabled, updates notification.
          * @param provider the provider
          */
         @Override
@@ -108,6 +106,9 @@ public class LocationService extends Service {
         }
     };
 
+    /**
+     * This function creates the notification channel.
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
