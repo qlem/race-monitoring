@@ -63,21 +63,26 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     private LocationManager locationManager;
 
     /**
+     * This variable stores the LocalBroadcastManager object used for communications
+     * between the service and the main activity.
+     */
+    private LocalBroadcastManager localBroadcastManager;
+
+    /**
      * Function that switch the main button to the "recording" mode.
      */
     private void switchToRecordingMode() {
+        recordingIndicator.startRecording();
         mainButton.setText(R.string.btn_stop);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // switch button to stop
-                recordingIndicator.stopRecording();
                 switchToReadyToGoMode();
 
                 // stop the service
-                LocalBroadcastManager.getInstance(MainActivity.this)
-                        .sendBroadcast(new Intent(LocationService.ACTION_STOP));
+                localBroadcastManager.sendBroadcast(new Intent(LocationService.ACTION_STOP));
             }
         });
     }
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
      * Function that switch the main button to the "ready to go" mode.
      */
     private void switchToReadyToGoMode() {
+        recordingIndicator.stopRecording();
         mainButton.setText(R.string.btn_start);
         mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
                 }
 
                 // switch button to stop
-                recordingIndicator.startRecording();
                 switchToRecordingMode();
 
                 // start service
@@ -154,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
 
             // excepted action after the sending of ACTION_PING for check if the service is alive
             if (action != null && action.equals(LocationService.ACTION_ALIVE)) {
-                recordingIndicator.startRecording();
                 switchToRecordingMode();
             }
 
@@ -230,15 +234,18 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         checkDeviceLocation();
 
+        // init local broadcast manager
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
         // init broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(LocationService.ACTION_ALIVE);
         intentFilter.addAction(LocationService.ACTION_UPDATE);
         intentFilter.addAction(LocationService.ACTION_RESULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
+        localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
 
         // ping the service for check if it is running
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(LocationService.ACTION_PING));
+        localBroadcastManager.sendBroadcast(new Intent(LocationService.ACTION_PING));
     }
 
     /**
@@ -268,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
      */
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        localBroadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 

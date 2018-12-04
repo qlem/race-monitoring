@@ -51,6 +51,12 @@ public class LocationService extends Service {
     private static final Integer NOTIFICATION_ID = 42;
 
     /**
+     * This variable stores the LocalBroadcastManager object used for communications
+     * between the service and the main activity.
+     */
+    private LocalBroadcastManager localBroadcastManager;
+
+    /**
      * Some constant variables that represent the actions sent between the service
      * and the main activity for communicate.
      */
@@ -72,8 +78,7 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             locations.add(location);
-            LocalBroadcastManager.getInstance(LocationService.this)
-                    .sendBroadcast(new Intent(LocationService.ACTION_UPDATE));
+            localBroadcastManager.sendBroadcast(new Intent(LocationService.ACTION_UPDATE));
         }
 
         /**
@@ -163,15 +168,14 @@ public class LocationService extends Service {
 
             // if receives "ping", sends "pong"
             if (action != null && action.equals(LocationService.ACTION_PING)) {
-                LocalBroadcastManager.getInstance(LocationService.this)
-                        .sendBroadcast(new Intent(LocationService.ACTION_ALIVE));
+                localBroadcastManager.sendBroadcast(new Intent(LocationService.ACTION_ALIVE));
             }
 
             // if receives "stop", sends locations list then stops self
             else if (action != null && action.equals(LocationService.ACTION_STOP)) {
                 Intent result = new Intent(ACTION_RESULT);
                 result.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-                LocalBroadcastManager.getInstance(LocationService.this).sendBroadcast(result);
+                localBroadcastManager.sendBroadcast(result);
                 stopSelf();
             }
         }
@@ -196,11 +200,14 @@ public class LocationService extends Service {
             startForeground(false);
         }
 
+        // init local broadcast manager
+        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
         // register the broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PING);
         intentFilter.addAction(ACTION_STOP);
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
+        localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
 
         // init the locations list
         locations = new ArrayList<>();
@@ -241,6 +248,6 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         locationManager.removeUpdates(locationListener);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        localBroadcastManager.unregisterReceiver(broadcastReceiver);
     }
 }
