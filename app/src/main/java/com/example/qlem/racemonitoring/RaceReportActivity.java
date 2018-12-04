@@ -80,7 +80,7 @@ public class RaceReportActivity extends AppCompatActivity {
      * Function that is called for compute the speeds of the race.
      * @param index index of the current location point of the list
      */
-    private void computeSpeeds(int index) {
+    private void computeSpeed(int index) {
         Location current = locations.get(index);
 
         if (index < locations.size() - 1) {
@@ -105,7 +105,7 @@ public class RaceReportActivity extends AppCompatActivity {
      * Function that is called for compute the altitudes of the race.
      * @param index index of the current location point of the list
      */
-    private void computeAltitudes(int index) {
+    private void computeAltitude(int index) {
         Location current = locations.get(index);
 
         Altitude altitude = new Altitude((float) current.getAltitude());
@@ -158,10 +158,10 @@ public class RaceReportActivity extends AppCompatActivity {
             }
 
             // compute speeds
-            computeSpeeds(i);
+            computeSpeed(i);
 
             // compute altitudes
-            computeAltitudes(i);
+            computeAltitude(i);
         }
 
         NumberFormat nf = NumberFormat.getInstance();

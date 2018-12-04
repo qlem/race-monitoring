@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -71,7 +72,8 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             locations.add(location);
-            sendBroadcast(new Intent(ACTION_UPDATE));
+            LocalBroadcastManager.getInstance(LocationService.this)
+                    .sendBroadcast(new Intent(LocationService.ACTION_UPDATE));
         }
 
         /**
@@ -161,14 +163,15 @@ public class LocationService extends Service {
 
             // if receives "ping", sends "pong"
             if (action != null && action.equals(LocationService.ACTION_PING)) {
-                sendBroadcast(new Intent(ACTION_ALIVE));
+                LocalBroadcastManager.getInstance(LocationService.this)
+                        .sendBroadcast(new Intent(LocationService.ACTION_ALIVE));
             }
 
             // if receives "stop", sends locations list then stops self
             else if (action != null && action.equals(LocationService.ACTION_STOP)) {
                 Intent result = new Intent(ACTION_RESULT);
                 result.putParcelableArrayListExtra("locations", (ArrayList<? extends Parcelable>) locations);
-                sendBroadcast(result);
+                LocalBroadcastManager.getInstance(LocationService.this).sendBroadcast(result);
                 stopSelf();
             }
         }
@@ -197,7 +200,7 @@ public class LocationService extends Service {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PING);
         intentFilter.addAction(ACTION_STOP);
-        registerReceiver(broadcastReceiver, intentFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
 
         // init the locations list
         locations = new ArrayList<>();
@@ -238,6 +241,6 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         locationManager.removeUpdates(locationListener);
-        unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 }
