@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
                 // check location permission
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(MainActivity.this, "App cannot access to location: permission denied",
+                    Toast.makeText(MainActivity.this, "App cannot access to location, permission denied",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
     private void writeGPXFile() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "App cannot save GPX file: permission denied",
+            Toast.makeText(this, "App cannot save GPX file, permission denied",
                     Toast.LENGTH_SHORT).show();
             return;
         }
@@ -259,11 +259,11 @@ public class MainActivity extends AppCompatActivity implements LocationProviderD
         switch (requestCode) {
             case REQUEST_PERMISSION_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(this, "Permission denied: app cannot access to location",
+                    Toast.makeText(this, "App cannot access to location, permission denied",
                             Toast.LENGTH_SHORT).show();
                 }
                 if (grantResults[1] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(this, "Permission denied: app cannot access to external storage",
+                    Toast.makeText(this, "App cannot access to external storage, permission denied",
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
